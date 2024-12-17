@@ -9,7 +9,7 @@
         "@schematics/angular:component": {
           "inlineTemplate": false,
           "inlineStyle": false,
-          "style": "sass",
+          "style": "css",
           "skipTests": true
         },
         "@schematics/angular:class": {
@@ -48,7 +48,7 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "sass",
+            "inlineStyleLanguage": "css",
             "assets": [
               {
                 "glob": "**/*",
@@ -57,7 +57,7 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "src/styles.sass"
+              "src/styles.css"
             ],
             "scripts": []
           },

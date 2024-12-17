@@ -1,1 +1,32 @@
-<p>nav works!</p>
+<mat-drawer-container class="container" autosize>
+    <mat-drawer #drawer class="sidenav" mode="side">
+    <mat-nav-list class="nav-list">
+      <a mat-list-item routerLink="/">
+        <i class="material-icons">home</i>
+        HOME
+      </a>
+      <a mat-list-item routerLink="/">
+        <i class="material-icons">account_circle</i>
+        Técnicos
+      </a>
+      <a mat-list-item routerLink="/">
+        <i class="material-icons">person</i>
+        Clientes
+      </a>
+      <a mat-list-item routerLink="/">
+        <i class="material-icons">code</i>
+        GitHub
+      </a>
+      <a mat-list-item routerLink="/">
+        <i class="material-icons">logout</i>
+        Sair
+      </a>
+    </mat-nav-list>
+  </mat-drawer>
+  
+  <div class="container-content">
+    <button type="button" mat-button (click)="drawer.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+  </mat-drawer-container>
