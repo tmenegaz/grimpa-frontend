@@ -1,5 +1,5 @@
 <mat-drawer-container class="container" autosize>
-    <mat-drawer #drawer class="sidenav" mode="side">
+    <mat-drawer #drawer class="sidenav custom-box-shadow" mode="side">
     <mat-nav-list class="nav-list">
       <a mat-list-item routerLink="home">
         <i class="material-icons">home</i>
@@ -9,7 +9,7 @@
         <i class="material-icons">account_circle</i>
         Técnicos
       </a>
-      <a mat-list-item routerLink="/">
+      <a mat-list-item routerLink="clientes">
         <i class="material-icons">person</i>
         Clientes
       </a>
@@ -25,9 +25,14 @@
   </mat-drawer>
   
   <div class="container-content">
-    <button type="button" class="custom-elevation" mat-button (click)="drawer.toggle()">
+    
+    <app-header></app-header>
+
+    <button type="button" class=" menu-button custom-box-shadow" mat-button (click)="drawer.toggle()">
       <mat-icon class="menu">menu</mat-icon>
     </button>
   </div>
+
   <router-outlet></router-outlet>
+
 </mat-drawer-container>

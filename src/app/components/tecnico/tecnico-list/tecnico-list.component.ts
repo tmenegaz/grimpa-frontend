@@ -1,15 +1,13 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Tecnico } from '../../../entities/tecnico/tecnico';
+import { SharedModule } from '../../shared/shared.module';
 
 
 @Component({
   selector: 'app-tecnico-list',
-  imports: [
-    MatTableModule,
-    MatPaginatorModule
-  ],
+  imports: [SharedModule],
   templateUrl: './tecnico-list.component.html',
   styleUrl: './tecnico-list.component.css',
   standalone: true

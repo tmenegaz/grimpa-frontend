@@ -10,9 +10,12 @@ const config = {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    {
-      provide: BrowserAnimationsModule,
-      useValue: BrowserAnimationsModule.withConfig(config), },
-    appConfig.providers, provideAnimationsAsync()
-  ]})
-  .catch((err) => console.error(err));
+      {
+        provide: BrowserAnimationsModule,
+        useValue: BrowserAnimationsModule.withConfig(config),
+      },
+      ...appConfig.providers, 
+      provideAnimationsAsync()
+    ]
+  }
+).catch((err) => console.error(err));

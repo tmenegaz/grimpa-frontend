@@ -1,0 +1,28 @@
+<div class="login-container">
+  <app-header></app-header>
+  <div class="form-container custom-box-shadow">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
+      <h1>Access to Grimpa tasks</h1>
+      <mat-form-field class="full-width">
+        <mat-label>E-mail</mat-label>
+        <input formControlName="email" name="email" matInput placeholder="Ex. email@provedor.com" type="email">
+        <div *ngIf="emailErrors">
+          <small>{{ emailErrors }}</small>
+        </div>
+      </mat-form-field>
+      
+      <mat-form-field class="full-width">
+        <mat-label>Senha</mat-label>
+        <input formControlName="senha" name="senha" matInput placeholder="Ex. 123abcABC!&_" type="password">
+        <div *ngIf="senhaErrors">
+          <small>{{ senhaErrors }}</small>
+        </div>
+      </mat-form-field>
+
+      <div class="container-submit">
+        <button type="submit" [disabled]="loginForm.invalid" class="primary custom-box-shadow" mat-stroked-button>Entrar</button>
+        <a (click)="onCancel()" class="custom-box-shadow" mat-stroked-button routerLink="home">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>

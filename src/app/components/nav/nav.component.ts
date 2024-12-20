@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterModule } from '@angular/router';
+import { HeaderComponent } from '../header/header.component';
+import { SharedModule } from '../shared/shared.module';
 
 @Component({
   standalone: true,
@@ -12,12 +12,12 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.css',
   imports: [
+    SharedModule,
     CommonModule,
     MatSidenavModule,
     MatListModule,
-    MatButtonModule,
-    MatIconModule,
-    RouterModule
+    RouterModule,
+    HeaderComponent
   ]
 })
     export class NavComponent implements OnInit {
