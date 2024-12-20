@@ -28,7 +28,7 @@ import { Router, RouterModule } from '@angular/router';
       ) {}
 
       ngOnInit(): void {
-    this.router.navigate(["home"]);
+    this.router.navigate([]);
   }
 
 }
