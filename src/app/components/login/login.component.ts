@@ -78,11 +78,11 @@ export class LoginComponent implements OnInit {
                 const auth = token.headers.get('Authorization');
                 this.authService.succesFullLogin(auth.substring(7));
 
-                this.toastr.success('Login: Success');
+                this.toastr.success('Success', 'Login');
 
                 this.loginForm.get('email').setValidators(null);
                 this.loginForm.get('senha').setValidators(null);
-                
+
                 this.loginForm.reset(null, { emitEvent: true });
 
                 this.router.navigate(["home"]);
