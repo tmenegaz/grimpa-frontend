@@ -1,22 +1,27 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { SharedModule } from '../shared/shared.module';
-import { Router } from '@angular/router';
-import { HeaderComponent } from '../header/header.component';
-import { Credenciais } from '../../entities/login/credenciais';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Subject, takeUntil } from 'rxjs';
+import { Credenciais } from '../../entities/login/credenciais';
+import { AuthService } from '../../entities/login/service/auth.service';
+import { HeaderComponent } from '../header/header.component';
+import { SharedModule } from '../shared/shared.module';
+
 
 
 @Component({
   selector: 'app-login',
   imports: [SharedModule, ReactiveFormsModule, HeaderComponent,],
-templateUrl: './login.component.html',
+  templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   standalone: true
 })
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
+  private destroy$ = new Subject<void>();
 
   credenciais: Credenciais = {
     email: null,
@@ -25,12 +30,12 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private readonly router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
     this.loginForm = this.setLoginForm();
-
   }
 
   setLoginForm(): FormGroup {
@@ -61,17 +66,35 @@ export class LoginComponent implements OnInit {
       onSubmit(): void {
         if (!this.hasEmailErrors && !this.hasSenhaErrors) {
           const { email, senha } = this.loginForm.value;
+
           this.credenciais = { email, senha };
-          this.loginForm.get('email').setValidators(null);
-          this.loginForm.get('senha').setValidators(null);
-          this.loginForm.reset(null, { emitEvent: true });
-          this.toastr.success('Login: Success');
+
+          this.authService.authenticate(this.credenciais)
+          .pipe(
+            takeUntil(this.destroy$)
+          )
+          .subscribe({
+            next: (token: HttpResponse<string>) => {
+                const auth = token.headers.get('Authorization');
+                this.authService.succesFullLogin(auth.substring(7));
+
+                this.toastr.success('Login: Success');
+
+                this.loginForm.get('email').setValidators(null);
+                this.loginForm.get('senha').setValidators(null);
+                
+                this.loginForm.reset(null, { emitEvent: true });
+
+                this.router.navigate(["home"]);
+              },
+              error: () => {
+                this.toastr.error("Login: fail");
+              }
+            });          
         } 
     }
 
   onCancel(): void {
     this.loginForm.reset({ emitEven: false });
-    this.router.navigate(["home"]);
   }
-
 }
