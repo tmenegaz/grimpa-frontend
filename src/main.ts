@@ -1,10 +1,11 @@
-import { importProvidersFrom } from '@angular/core';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideToastr } from 'ngx-toastr';
 import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
-import { provideToastr } from 'ngx-toastr';
+import { authInterceptor } from './app/entities/login/interceptors/auth.interceptor';
 
 const config = {
   disableAnimations: false
@@ -22,7 +23,13 @@ bootstrapApplication(AppComponent, {
         timeOut: 4000,
         closeButton: true,
         progressBar: true
-      })
+      }),
+      provideHttpClient(),
+      {
+        provide: HTTP_INTERCEPTORS,
+        useValue: authInterceptor,
+        multi: true
+      }
     ]
   }
 ).catch((err) => console.error(err));

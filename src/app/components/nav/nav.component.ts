@@ -35,7 +35,7 @@ import { ToastrService } from 'ngx-toastr';
 
     logout(): void {
       localStorage.clear();
-      this.toastr.success("Cuccess", "Logout")
+      this.toastr.success("Success", "Logout")
       this.router.navigate(['login']);
     }
 
