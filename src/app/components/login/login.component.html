@@ -6,17 +6,11 @@
       <mat-form-field class="full-width">
         <mat-label>E-mail</mat-label>
         <input formControlName="email" name="email" matInput placeholder="Ex. email@provedor.com" type="email">
-        <div *ngIf="emailErrors">
-          <small>{{ emailErrors }}</small>
-        </div>
       </mat-form-field>
       
       <mat-form-field class="full-width">
         <mat-label>Senha</mat-label>
         <input formControlName="senha" name="senha" matInput placeholder="Ex. 123abcABC!&_" type="password">
-        <div *ngIf="senhaErrors">
-          <small>{{ senhaErrors }}</small>
-        </div>
       </mat-form-field>
 
       <div class="container-submit">

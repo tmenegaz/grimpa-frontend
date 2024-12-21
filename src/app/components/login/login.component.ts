@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { Credenciais } from '../../entities/login/credenciais';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-login',
-  imports: [SharedModule, ReactiveFormsModule, HeaderComponent],
-  templateUrl: './login.component.html',
+  imports: [SharedModule, ReactiveFormsModule, HeaderComponent,],
+templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   standalone: true
 })
@@ -23,6 +25,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private readonly router: Router,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -37,26 +40,34 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  get emailErrors(): string {
-    const emailControl = this.loginForm.get('email');
-    if (emailControl.touched && emailControl.invalid) {
-      return emailControl.hasError('required') ? 'E-mail é obrigatório.' : 'E-mail inválido.'; }
-      return '';
+  validateControl(controlName: string, requiredMessage: string, invalidMessage: string): boolean { 
+    const control = this.loginForm.get(controlName); 
+    if (!control.value || (control.touched && control.invalid)) {
+      const errorMessage = control.hasError('required') ? requiredMessage : invalidMessage;
+      control.reset(null, { emitEvent: false });
+      this.toastr.error(errorMessage);
+      return true;
     }
-      
-  get senhaErrors(): string {
-    const senhaControl = this.loginForm.get('senha');
-    if (senhaControl.touched && senhaControl.invalid) {
-      return senhaControl.hasError('required') ? 'Senha é obrigatória.' : 'Senha deve ter no mínimo 3 caracteres.'; }
-      return '';
+      return false;
     }
 
-  onSubmit(): void {
-    this.credenciais.email = this.loginForm.get("email").value;
-    this.credenciais.senha = this.loginForm.get("senha").value;
-    console.log(this.credenciais);
-    
-  }
+      get hasEmailErrors(): boolean {
+        return this.validateControl('email', 'E-mail obrigatório', 'E-mail inválido'); 
+      }
+      get hasSenhaErrors(): boolean {
+        return this.validateControl('senha', 'Senha é obrigatória', ' Senha deve ter no mínimo 3 caracteres');
+      }
+
+      onSubmit(): void {
+        if (!this.hasEmailErrors && !this.hasSenhaErrors) {
+          const { email, senha } = this.loginForm.value;
+          this.credenciais = { email, senha };
+          this.loginForm.get('email').setValidators(null);
+          this.loginForm.get('senha').setValidators(null);
+          this.loginForm.reset(null, { emitEvent: true });
+          this.toastr.success('Login: Success');
+        } 
+    }
 
   onCancel(): void {
     this.loginForm.reset({ emitEven: false });
