@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
-import { Tecnico } from '~src/app/components/tecnico/entity/tecnico';
 import { SharedModule } from '~components/shared/shared.module';
-import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
-import { TecnicoFilterComponent } from '~components/tecnico/tecnico-filter/tecnico-filter.component';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
+import { TecnicoFilterComponent } from '~components/tecnico/tecnico-filter/tecnico-filter.component';
+import { Tecnico } from '~src/app/components/tecnico/entity/tecnico';
+import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 
 
 
@@ -21,6 +21,9 @@ import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 export class TecnicoListComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  @Output()
+  dataSourceList: Tecnico[] = [null];
 
   dataSource: MatTableDataSource<Tecnico>;
   private destroy$ = new Subject<void>;
@@ -44,7 +47,9 @@ export class TecnicoListComponent implements OnInit {
     .subscribe({
       next: (tecnicos: Tecnico[]) => {               
         this.dataSource = new MatTableDataSource<Tecnico>(tecnicos);
+        
         this.dataSource.paginator = this.paginator;
+        this.dataSourceList = this.dataSource.filteredData;
       },
       error: (error) => {
         error.status === 403
