@@ -1,8 +1,7 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { AfterViewInit, Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
-
-import { AuthService } from '~entities/login/service/auth.service';
+import { AuthService } from '~app/config/login/service/auth.service';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico';
 import { API_CONFIG, AuthHeaderService } from '~src/app/config/login/service/auth-header.service';
 

@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { Cliente } from '../../../entities/cliente/cliente';
+import { Cliente } from '../entity/cliente';
 
 
 @Component({

@@ -3,9 +3,9 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideToastr } from 'ngx-toastr';
-import { AppComponent } from './app/app.component';
-import { appConfig } from './app/app.config';
-import { authInterceptor } from './app/entities/login/interceptors/auth.interceptor';
+import { AppComponent } from '~app/app.component';
+import { appConfig } from '~app/app.config';
+import { authInterceptor } from '~app/config/login/interceptors/auth.interceptor';
 
 const config = {
   disableAnimations: false
