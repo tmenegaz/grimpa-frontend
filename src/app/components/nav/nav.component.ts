@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterModule } from '@angular/router';
-import { HeaderComponent } from '../header/header.component';
-import { SharedModule } from '../shared/shared.module';
+import { HeaderComponent } from '~components/header/header.component';
+import { SharedModule } from '~components/shared/shared.module';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

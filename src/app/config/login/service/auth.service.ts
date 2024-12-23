@@ -1,9 +1,11 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Credenciais } from '../credenciais';
-import { API_CONFIG } from '../../../config/api.config';
+import { Credenciais } from '~entities/login/credenciais';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { API_CONFIG } from '~src/app/config/login/service/auth-header.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +15,9 @@ export class AuthService {
   private jwtService = new JwtHelperService();
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient, 
+    private toastr: ToastrService,
+    private readonly router: Router,
   ) { }
 
   authenticate(creds: Credenciais): Observable<HttpResponse<string>> {
@@ -35,5 +39,10 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  handleTokenExpiration(): void { 
+    this.toastr.error('A conexão expirou', 'Erro de Autenticação');
+    this.router.navigate(['login']);
   }
 }

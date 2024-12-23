@@ -4,7 +4,6 @@ export interface Tecnico {
     cpf: string;
     email: string;
     senha: string;
-    perfil: string[];
+    perfis: string[];
     dataCriacao: Date | string;
-    dataFinal?: Date | string;
   }

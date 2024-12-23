@@ -5,7 +5,7 @@
 .form-container {
   position: absolute;
   width: 90%;
-  margin: 8rem;
+  margin: 8rem auto auto auto;
   display:flex;
   align-items: center;
   justify-content: center;

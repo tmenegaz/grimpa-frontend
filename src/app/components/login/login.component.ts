@@ -4,10 +4,10 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
-import { Credenciais } from '../../entities/login/credenciais';
-import { AuthService } from '../../entities/login/service/auth.service';
-import { HeaderComponent } from '../header/header.component';
-import { SharedModule } from '../shared/shared.module';
+import { Credenciais } from '~entities/login/credenciais';
+import { AuthService } from '~entities/login/service/auth.service';
+import { HeaderComponent } from '~components/header/header.component';
+import { SharedModule } from '~components/shared/shared.module';
 
 
 

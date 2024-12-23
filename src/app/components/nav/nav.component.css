@@ -12,7 +12,6 @@
 
 .sidenav {
   width: auto;
-  color: white;
   background-color: rgb(235, 235, 235);
 }
 
@@ -24,7 +23,6 @@
   z-index: 1;
   position: fixed;
   margin: .5rem 0 0 .5rem;
-  color: white;
   background-color: rgb(235, 235, 235);
 }
 
