@@ -5,11 +5,16 @@
     0px 3px 14px 2px rgba(0, 0, 0, 0.12); 
 }
 
+.spacer {
+  flex: 1 2 auto;
+}
+
 .header-container {
   background-color: rgb(235, 235, 235);
   width: 100%;
+  height: 6rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   position: fixed;
@@ -17,10 +22,10 @@
   border-top-left-radius: 1rem;
 }
 
-.header-container h1 {
-  margin-bottom: 0;
-}
-
-.header-container p {
-  margin-top: 0;
+.header-container .title {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  width: inherit;
+  justify-content: center;
 }

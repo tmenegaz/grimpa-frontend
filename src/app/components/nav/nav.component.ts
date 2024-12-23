@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { filter } from 'rxjs';
 import { HeaderComponent } from '~components/header/header.component';
 import { SharedModule } from '~components/shared/shared.module';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   standalone: true,
@@ -22,15 +23,23 @@ import { ToastrService } from 'ngx-toastr';
   ]
 })
     export class NavComponent implements OnInit {
-  
-  
+
+      isLoginPage = false;
+
       constructor(
         private readonly router: Router,
         private toastr: ToastrService,
       ) {}
 
       ngOnInit(): void {
-    this.router.navigate([]);
+        this.checkIfLoginPage(); 
+        this.router.events
+        .pipe(
+          filter(event => event instanceof NavigationEnd)
+        )
+        .subscribe(() => {
+          this.checkIfLoginPage();
+        });
     }
 
     logout(): void {
@@ -39,4 +48,7 @@ import { ToastrService } from 'ngx-toastr';
       this.router.navigate(['login']);
     }
 
-}
+    checkIfLoginPage(): void {
+      this.isLoginPage = this.router.url === '/login';
+    }
+  }

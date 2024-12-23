@@ -17,7 +17,7 @@ export class TecnicoFilterComponent implements OnChanges {
 
   public data: string[];
 
-  public dataSource: MatTableDataSource<Tecnico> = new MatTableDataSource([]);
+  public dataSource = new MatTableDataSource([]);
 
   ngOnChanges({ dataSourceList }: SimpleChanges): void {
     if (dataSourceList.currentValue) {
@@ -30,8 +30,6 @@ export class TecnicoFilterComponent implements OnChanges {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.data = this.dataSource.filteredData.map(tecnico => tecnico.nome);
     
-  }
-
-  
+  }  
 
 }

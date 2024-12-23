@@ -19,16 +19,6 @@
   margin-right: .5rem;
 }
 
-.menu-button {
-  z-index: 1;
-  position: fixed;
-  margin: .5rem 0 0 .5rem;
-  background-color: rgb(235, 235, 235);
-}
 
-mat-icon.menu {
-  margin-right: 8px;
-  margin-left: 4px;
-}
 
 
