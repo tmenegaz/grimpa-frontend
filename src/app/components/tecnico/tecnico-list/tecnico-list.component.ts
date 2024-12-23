@@ -23,7 +23,7 @@ export class TecnicoListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   @Output()
-  dataSourceList: Tecnico[] = [null];
+  dataSourceList: MatTableDataSource<Tecnico>;
 
   dataSource: MatTableDataSource<Tecnico>;
   private destroy$ = new Subject<void>;
@@ -49,7 +49,7 @@ export class TecnicoListComponent implements OnInit {
         this.dataSource = new MatTableDataSource<Tecnico>(tecnicos);
         
         this.dataSource.paginator = this.paginator;
-        this.dataSourceList = this.dataSource.filteredData;
+        this.dataSourceList = this.dataSource;
       },
       error: (error) => {
         error.status === 403

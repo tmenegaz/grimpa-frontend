@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SharedModule } from '~components/shared/shared.module';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico';
@@ -10,26 +10,17 @@ import { Tecnico } from '~src/app/components/tecnico/entity/tecnico';
   styleUrl: './tecnico-filter.component.css',
   standalone: true
 })
-export class TecnicoFilterComponent implements OnChanges {
+export class TecnicoFilterComponent {
   
   @Input()
-  dataSourceList: Tecnico[];
-
+  dataSourceList: MatTableDataSource<Tecnico>;
+  
   public data: string[];
 
-  public dataSource = new MatTableDataSource([]);
 
-  ngOnChanges({ dataSourceList }: SimpleChanges): void {
-    if (dataSourceList.currentValue) {
-      this.dataSource.data = dataSourceList.currentValue;
-    }
-  }
-
-  applyFilter(event: Event) {    
+  applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.data = this.dataSource.filteredData.map(tecnico => tecnico.nome);
-    
+    this.dataSourceList.filter = filterValue.trim().toLowerCase();    
   }  
 
 }
