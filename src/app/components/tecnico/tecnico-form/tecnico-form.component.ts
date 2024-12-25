@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -12,6 +12,7 @@ import { AuthService } from '~src/app/config/login/service/auth.service';
 import { Perfil } from '~src/app/enums/perfil.enum';
 import { Location } from '@angular/common';
 import { noNumbersValidator } from '~src/app/validators/nome.validator';
+import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class TecnicoFormComponent  implements OnInit {
   tecnicoForm: FormGroup;
   selectedPefil = [];
   isAdmin: boolean;
+  isLoading = false
 
   private destroy$ = new Subject<void>();
 
@@ -42,6 +44,7 @@ export class TecnicoFormComponent  implements OnInit {
     private tecnicoService: TecnicoService,
     private authService: AuthService,
     private location: Location,
+    @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
   ) { }
 
   ngOnInit(): void {
@@ -92,6 +95,7 @@ export class TecnicoFormComponent  implements OnInit {
       }
 
   onSubmit(): void {
+    this.isLoading = true;
     let perfilValues = this.selectedPefil.map(
       perfil => Perfil[perfil as keyof typeof Perfil]);
 
@@ -114,18 +118,21 @@ export class TecnicoFormComponent  implements OnInit {
       .pipe( 
         catchError(error => {
            console.error(error);
+           this.isLoading = false;
             this.toastr.error('Erro ao cadastrar técnico', 'Erro');
              return of(null);
              }),
               finalize(() => {
-                 this.tecnicoForm.reset(null, {
-                   emitEvent: false 
-                  });
-                   this.router.navigate(["tecnicos"]);
-                   })
-                   )
-                    .subscribe({ 
-                      next: () => {
+                this.isLoading = false;
+                this.tecnicoForm.reset(null, {
+                  emitEvent: false,
+                });
+                this.router.navigate(["tecnicos"]);
+              })
+            )
+            .subscribe({ 
+              next: () => {
+                        this.isLoading = false;
                         this.toastr.success('Success', 'Cadastro');
                        } 
                       });

@@ -11,6 +11,7 @@ import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-transla
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 import { LanguageService } from './app/services/language.service';
+import { SPINNER_CONFIG, DEFAULT_SPINNER_CONFIG } from './app/config/spinner-config';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -61,7 +62,11 @@ bootstrapApplication(AppComponent, {
           deps: [HttpClient]
         }
       }).providers,
-      LanguageService
+      LanguageService,
+      { 
+        provide: SPINNER_CONFIG,
+        useValue: DEFAULT_SPINNER_CONFIG
+      }
     ]
   }
 ).catch((err) => console.error(err));

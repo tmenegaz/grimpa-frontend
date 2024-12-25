@@ -4,14 +4,16 @@ mat-toolbar {
 .spacer {
   flex: 1 2 auto;
 }
-
+.buttons-right {
+  display: contents;
+}
 .icon {
-  margin: 0 2% 0 0;
+  margin: 0 1% 0 0;
 }
 
 .toggle-group {
   width: 7.8;
-  margin: 0 2% 0 0;
+  margin: 0 1% 0 0;
 }
 
 .header-container {
@@ -31,6 +33,6 @@ mat-toolbar {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: row;
-  width: 79%;
+  width: 79.5%;
   justify-content: center;
 }

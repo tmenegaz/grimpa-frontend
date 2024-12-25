@@ -1,22 +1,29 @@
-<div class="tecnico-container">
+<div *ngIf="isLoading" class="spinner-container">
+  <mat-progress-spinner class="spinner-margin" 
+  [strokeWidth]="spinnerConfig.strokeWidth" 
+  [mode]="spinnerConfig.mode" 
+  [value]="spinnerConfig.value"></mat-progress-spinner>
+</div>
+
+<div *ngIf="!isLoading" class="tecnico-container">
   <app-header></app-header>
   <div class="form-container custom-box-shadow">
     <form [formGroup]="tecnicoForm" (ngSubmit)="onSubmit()" class="form">
-      <h2>Cadastrar novo técnico</h2>
+      <h2>{{ 'titulo_cadastro_tecnico' | translate }}</h2>
       
       <mat-form-field class="full-width">
-        <mat-label>Nome</mat-label>
-        <input formControlName="nome" name="nome" matInput placeholder="Nome completo" type="text">
+        <mat-label>{{ 'tecnico_nome' | translate }}</mat-label>
+        <input formControlName="nome" name="nome" matInput placeholder="{{ 'placeholder_nome_tecnico' | translate }}" type="text">
       </mat-form-field>
       
       <mat-form-field class="full-width">
-        <mat-label>CPF</mat-label>
+        <mat-label>{{ 'tecnico_cpf' | translate }}</mat-label>
         <input formControlName="cpf" name="cpf" matInput placeholder="xxx.xxx.xxx-xx" type="text" mask="000.000.000-00">
       </mat-form-field>
       
       <ng-container *ngIf="isAdmin">  
         <mat-form-field class="full-width">
-          <mat-label>Perfil</mat-label>
+          <mat-label>{{ 'tecnico_perfil' | translate }}</mat-label>
           <mat-select [(ngModel)]="selectedPefil"
           [formControl]="perfilControl" multiple name="perfil"
           ><mat-option
@@ -27,18 +34,18 @@
     </ng-container>
       
       <mat-form-field class="full-width">
-        <mat-label>E-mail</mat-label>
+        <mat-label>{{ 'tecnico_email' | translate }}</mat-label>
         <input formControlName="email" name="email" matInput placeholder="Ex. email@provedor.com" type="email">
       </mat-form-field>
       
       <mat-form-field class="full-width">
-        <mat-label>Senha</mat-label>
+        <mat-label>{{ 'tecnico_senha' | translate }}</mat-label>
         <input formControlName="senha" name="senha" matInput placeholder="Ex. 123abcABC!&_" type="password">
       </mat-form-field>
 
       <div class="container-submit">
-        <button type="submit" [disabled]="tecnicoForm.invalid"  class="primary custom-box-shadow" mat-stroked-button>Criar</button>
-        <a (click)="onCancel()" class="custom-box-shadow" mat-stroked-button routerLink="home">Cancelar</a>
+        <button type="submit" [disabled]="tecnicoForm.invalid"  class="primary custom-box-shadow" mat-stroked-button>{{ 'tecnico_cria' | translate }}</button>
+        <a (click)="onCancel()" class="custom-box-shadow" mat-stroked-button routerLink="home">{{ 'tecnico_cancela' | translate }}</a>
       </div>
     </form>
   </div>

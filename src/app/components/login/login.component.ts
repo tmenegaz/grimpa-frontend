@@ -1,13 +1,14 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { AuthService } from '~app/config/login/service/auth.service';
 import { HeaderComponent } from '~components/header/header.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { Credenciais } from '~src/app/config/login/credenciais';
+import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { LanguageService } from '~src/app/services/language.service';
 
 
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
   private destroy$ = new Subject<void>();
+  isLoading = false;
 
   credenciais: Credenciais = {
     email: null,
@@ -32,7 +34,8 @@ export class LoginComponent implements OnInit {
     private readonly router: Router,
     private toastr: ToastrService,
     private authService: AuthService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
   ) { }
 
   ngOnInit(): void {
@@ -69,6 +72,7 @@ export class LoginComponent implements OnInit {
       }
 
       onSubmit(): void {
+        this.isLoading = true;
         if (
           !this.hasEmailErrors
           && !this.hasSenhaErrors
@@ -78,7 +82,11 @@ export class LoginComponent implements OnInit {
 
           this.authService.authenticate(this.credenciais)
           .pipe(
-            takeUntil(this.destroy$)
+            takeUntil(this.destroy$),
+            finalize(() => {
+              this.isLoading = false;
+            }
+            ),
           )
           .subscribe({
             next: (response: HttpResponse<string>) => {
@@ -93,10 +101,12 @@ export class LoginComponent implements OnInit {
 
                 this.loginForm.reset(null, { emitEvent: true });
 
+                this.isLoading = false;
                 localStorage.setItem('language', this.languageService.getCurrentLanguage() || 'pt')
                 this.router.navigate(["home"]);
               },
               error: () => {
+                this.isLoading = false;
                 this.toastr.error("Login: fail");
               }
             });          

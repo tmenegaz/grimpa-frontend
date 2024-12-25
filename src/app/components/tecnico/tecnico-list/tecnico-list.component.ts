@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +10,7 @@ import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 import { formatProfiles, translateProfiles } from '~shared/utils';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
+import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { LanguageService } from '~src/app/services/language.service';
 
 @Component({
@@ -25,6 +27,8 @@ export class TecnicoListComponent implements OnInit, OnChanges {
   @Input()
   dataSourceFiltered: string;
 
+  isLoading = true;
+
   dataSource: MatTableDataSource<Tecnico>;
   private destroy$ = new Subject<void>;
 
@@ -33,6 +37,7 @@ export class TecnicoListComponent implements OnInit, OnChanges {
     private toastr: ToastrService,
     private languageService: LanguageService,
     private translate: TranslateService,
+    @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
   ) {}
 
   displayedColumns: string[] = ['id', 'nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes'];
@@ -57,6 +62,7 @@ export class TecnicoListComponent implements OnInit, OnChanges {
   }
   
   findAll(): void {
+    this.isLoading = true;
     this.service.findAll()
     .pipe(
       takeUntil(this.destroy$)
@@ -69,8 +75,10 @@ export class TecnicoListComponent implements OnInit, OnChanges {
         this.dataSource = new MatTableDataSource<Tecnico>(tecnicos);
         
         this.dataSource.paginator = this.paginator;
+        this.isLoading = false;
       },
       error: (error) => {
+      this.isLoading = false;
         error.status === 403
         ? this.toastr.error("A conexão expirou", "Erro de Autenticação")
         : this.toastr.error("Tecnicos unlisted", "Error");

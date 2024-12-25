@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
@@ -28,6 +29,7 @@ import { NgxMaskDirective } from 'ngx-mask';
     NgxMaskDirective,
     RouterModule,
     TranslateModule,
+    MatProgressSpinnerModule,
     
   ],
   exports: [
@@ -45,6 +47,7 @@ import { NgxMaskDirective } from 'ngx-mask';
     NgxMaskDirective,
     RouterModule,
     TranslateModule,
+    MatProgressSpinnerModule,
   ]
 })
 export class SharedModule { }
