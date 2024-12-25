@@ -1,0 +1,12 @@
+{
+  "DATA_INICIAL": "Start date",
+  "PERFIL": "Profile",
+  "ADMIN": "Admin",
+  "CLIENTE": "Client",
+  "NOME": "Name",
+  "SENHA": "Password",
+  "CPF": "CPF",
+  "EMAIL": "Email",
+  "ACOES": "Action",
+  "TECNICO": "Technician"
+}

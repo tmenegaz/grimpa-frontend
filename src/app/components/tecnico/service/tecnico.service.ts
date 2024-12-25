@@ -31,4 +31,21 @@ export class TecnicoService {
       })
     );
   }
+
+  create(tecnico: Tecnico): Observable<Tecnico> {
+    const headers = this.authHeaderService.getHeaders();
+
+    return this.http
+    .post<Tecnico>(`${API_CONFIG.baseURL}/tecnicos`, tecnico,
+      { headers }
+    )
+    .pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 403) {
+          this.authService.handleTokenExpiration();
+        }
+        return throwError(() => Error(error.message));
+      })
+    );
+  }
 }

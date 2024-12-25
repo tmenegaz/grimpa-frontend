@@ -2,9 +2,10 @@
   <app-header></app-header>
   <div class="form-container custom-box-shadow">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
-      <h1>Access to Grimpa tasks</h1>
+      <h2>Access to Grimpa tasks</h2>
+      
       <mat-form-field class="full-width">
-        <mat-label>E-mail</mat-label>
+          <mat-label>E-mail</mat-label>
         <input formControlName="email" name="email" matInput placeholder="Ex. email@provedor.com" type="email">
       </mat-form-field>
       

@@ -1,6 +1,6 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
@@ -8,12 +8,12 @@ import { AuthService } from '~app/config/login/service/auth.service';
 import { HeaderComponent } from '~components/header/header.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { Credenciais } from '~src/app/config/login/credenciais';
-
+import { LanguageService } from '~src/app/services/language.service';
 
 
 @Component({
   selector: 'app-login',
-  imports: [SharedModule, ReactiveFormsModule, HeaderComponent,],
+  imports: [SharedModule, HeaderComponent,],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   standalone: true
@@ -31,7 +31,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private toastr: ToastrService,
-    private authService: AuthService
+    private authService: AuthService,
+    private languageService: LanguageService
   ) { }
 
   ngOnInit(): void {
@@ -47,8 +48,12 @@ export class LoginComponent implements OnInit {
 
   validateControl(controlName: string, requiredMessage: string, invalidMessage: string): boolean { 
     const control = this.loginForm.get(controlName); 
+    
     if (!control.value || (control.touched && control.invalid)) {
-      const errorMessage = control.hasError('required') ? requiredMessage : invalidMessage;
+      const errorMessage = control.hasError('required') 
+      ? requiredMessage 
+      : invalidMessage;
+
       control.reset(null, { emitEvent: false });
       this.toastr.error(errorMessage);
       return true;
@@ -64,19 +69,22 @@ export class LoginComponent implements OnInit {
       }
 
       onSubmit(): void {
-        if (!this.hasEmailErrors && !this.hasSenhaErrors) {
-          const { email, senha } = this.loginForm.value;
-
-          this.credenciais = { email, senha };
+        if (
+          !this.hasEmailErrors
+          && !this.hasSenhaErrors
+        ) {
+          
+          this.credenciais = { ... this.loginForm.value };
 
           this.authService.authenticate(this.credenciais)
           .pipe(
             takeUntil(this.destroy$)
           )
           .subscribe({
-            next: (token: HttpResponse<string>) => {
-                const auth = token.headers.get('Authorization');
-                this.authService.succesFullLogin(auth.substring(7));
+            next: (response: HttpResponse<string>) => {
+                const token = response.headers.get('Authorization');
+
+                this.authService.succesFullLogin(token.substring(7));
 
                 this.toastr.success('Success', 'Login');
 
@@ -85,6 +93,7 @@ export class LoginComponent implements OnInit {
 
                 this.loginForm.reset(null, { emitEvent: true });
 
+                localStorage.setItem('language', this.languageService.getCurrentLanguage() || 'pt')
                 this.router.navigate(["home"]);
               },
               error: () => {
@@ -95,6 +104,11 @@ export class LoginComponent implements OnInit {
     }
 
   onCancel(): void {
-    this.loginForm.reset({ emitEven: false });
+    this.loginForm.reset(null, { emitEvent: false });
+  }
+
+  ngOnDestroy(): void { 
+    this.destroy$.next();
+    this.destroy$.complete(); 
   }
 }

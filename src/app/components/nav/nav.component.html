@@ -22,15 +22,9 @@
         Sair
       </a>
     </mat-nav-list>
-  </mat-drawer>
-  
+  </mat-drawer>  
   <div class="container-content">    
-    <app-header
-      [isLoginPage]="isLoginPage"
-      [drawer]="drawer"
-    ></app-header>
+    <app-header></app-header>
   </div>
-
   <router-outlet></router-outlet>
-
 </mat-drawer-container>

@@ -8,6 +8,7 @@
       "~src/*": ["src/*"],
       "~app/*": ["src/app/*"],
       "~entities/*": ["src/app/entities/*"],
+      "~shared/*": ["src/app/components/shared/*"],
       "~components/*": ["src/app/components/*"],
       "~pipes/*": ["src/app/config/pipes/*"],
     },

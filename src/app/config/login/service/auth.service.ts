@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
+import { Credenciais } from '~app/config/login/credenciais';
 import { API_CONFIG } from '~src/app/config/login/service/auth-header.service';
-import { Credenciais } from '../credenciais';
+import { Perfil } from '~src/app/enums/perfil.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -22,14 +23,16 @@ export class AuthService {
 
   authenticate(creds: Credenciais): Observable<HttpResponse<string>> {
     return this.http
-    .post(`${API_CONFIG.baseURL}/login`, creds, {
-      observe: 'response',
-      responseType: 'text'
-    })
+    .post<string>(`${API_CONFIG.baseURL}/login`, creds, {
+      observe: 'response'
+    });
   }
 
-  succesFullLogin(authToken: string): void {
+  succesFullLogin(authToken: string, perfil?: Perfil): void {
     localStorage.setItem('token', authToken);
+    if (perfil) {
+      localStorage.setItem('perfil', perfil.toString());
+    }
   }
 
   isAuthenticated(): boolean {
@@ -39,6 +42,12 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  getCurrentUserProfile(): Perfil | null {
+     const perfil = localStorage.getItem('perfil');
+      return perfil ? Perfil[perfil as keyof typeof Perfil] : null;
+
   }
 
   handleTokenExpiration(): void { 

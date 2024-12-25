@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { filter } from 'rxjs';
 import { HeaderComponent } from '~components/header/header.component';
 import { SharedModule } from '~components/shared/shared.module';
+import { DrawerService } from '~src/app/services/drawer.service';
 
 @Component({
   standalone: true,
@@ -18,37 +18,32 @@ import { SharedModule } from '~components/shared/shared.module';
     CommonModule,
     MatSidenavModule,
     MatListModule,
-    RouterModule,
     HeaderComponent
   ]
 })
-    export class NavComponent implements OnInit {
+    export class NavComponent implements OnInit, AfterViewInit {
 
-      isLoginPage = false;
-
+      @ViewChild('drawer') drawer: MatDrawer;
+      
       constructor(
         private readonly router: Router,
         private toastr: ToastrService,
+        private drawerService: DrawerService,
       ) {}
-
+      
       ngOnInit(): void {
-        this.checkIfLoginPage(); 
-        this.router.events
-        .pipe(
-          filter(event => event instanceof NavigationEnd)
-        )
-        .subscribe(() => {
-          this.checkIfLoginPage();
-        });
     }
+    
+    ngAfterViewInit(): void {
+      this.drawerService.setDrawer(this.drawer)
+    }
+
+
+    
 
     logout(): void {
-      localStorage.clear();
+      localStorage.removeItem('token');
       this.toastr.success("Success", "Logout")
       this.router.navigate(['login']);
-    }
-
-    checkIfLoginPage(): void {
-      this.isLoginPage = this.router.url === '/login';
     }
   }
