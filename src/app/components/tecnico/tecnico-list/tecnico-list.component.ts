@@ -1,6 +1,7 @@
 import { Component, inject, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,7 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { FooterComponent } from '~components/footer/footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
-import { formatProfiles, isAdmin, isRoleAdmin, translateProfiles } from '~shared/utils';
+import { formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
 import { AuthService } from '~src/app/config/login/service/auth.service';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
@@ -32,6 +33,8 @@ export class TecnicoListComponent implements OnInit, OnChanges {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  @ViewChild(MatSort) sort: MatSort;
+
   @Input()
   dataSourceFiltered: string;
 
@@ -40,7 +43,6 @@ export class TecnicoListComponent implements OnInit, OnChanges {
 
   readonly dialog = inject(MatDialog);
 
-  isAdmin: boolean;
   isLoading = true;
   showIdColumn = false;
   isEditMode = false;
@@ -113,6 +115,7 @@ export class TecnicoListComponent implements OnInit, OnChanges {
             tecnico.perfis = translateProfiles(tecnico.perfis, this.translate);
           });
           this.dataSource = new MatTableDataSource<Tecnico>(tecnicos);
+          this.dataSource.sort = this.sort;
 
           this.paginationService.setTotalElements(tecnicosDto.totalElements);
           this.isLoading = false;
@@ -169,14 +172,7 @@ export class TecnicoListComponent implements OnInit, OnChanges {
     this.isEditMode = isRoleAdmin(this.rolesService);
     this.displayedColumns = this.isEditMode
       ? ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes']
-      : ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao'];
-
-    this.isAdmin = isAdmin(this.authService);
-    this.displayedColumns = this.isAdmin
-      ? ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes']
       : ['nome', 'cpf', 'email', 'perfis', 'dataCriacao'];
-
-
   }
 
   ngOnDestroy(): void {

@@ -3,46 +3,46 @@
     [value]="spinnerConfig.value"></mat-progress-spinner>
 </div>
 
-<div *ngIf="!isLoading" class="first-row">
+<div *ngIf="!isLoading" matSort class="first-row">
   <div class="custom-box-shadow">
     <table mat-table [dataSource]="dataSource">
       <ng-container *ngIf="showIdColumn" matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID. </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID. </th>
         <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
       </ng-container>
 
       <ng-container matColumnDef="nome">
-        <th mat-header-cell *matHeaderCellDef> {{ 'tecnico_nome' | translate }} </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tecnico_nome' | translate }} </th>
         <td mat-cell *matCellDef="let element"> {{ element.nome }} </td>
       </ng-container>
 
       <ng-container matColumnDef="cpf">
-        <th mat-header-cell *matHeaderCellDef> {{ 'tecnico_cpf' | translate }} </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tecnico_cpf' | translate }} </th>
         <td mat-cell *matCellDef="let element"> {{ element.cpf }} </td>
       </ng-container>
 
       <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef> {{ 'tecnico_email' | translate }} </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tecnico_email' | translate }} </th>
         <td mat-cell *matCellDef="let element"> {{ element.email }} </td>
       </ng-container>
 
-      <ng-container *ngIf="isAdmin" matColumnDef="senha">
-        <th mat-header-cell *matHeaderCellDef> {{ 'tecnico_senha' | translate }} </th>
+      <ng-container *ngIf="isEditMode" matColumnDef="senha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tecnico_senha' | translate }} </th>
         <td mat-cell *matCellDef="let element"> {{ element.senha | passwordMask }} </td>
       </ng-container>
 
       <ng-container matColumnDef="perfis">
-        <th mat-header-cell *matHeaderCellDef> {{ 'tecnico_perfil' | translate }} </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tecnico_perfil' | translate }} </th>
         <td mat-cell *matCellDef="let element"> {{ formatProfiles(element.perfis) }} </td>
       </ng-container>
 
       <ng-container matColumnDef="dataCriacao">
-        <th mat-header-cell *matHeaderCellDef> {{ 'tecnico_data_inicial' | translate }} </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tecnico_data_inicial' | translate }} </th>
         <td mat-cell *matCellDef="let element"> {{ element.dataCriacao }} </td>
       </ng-container>
 
       <ng-container *ngIf="isEditMode" matColumnDef="acoes">
-        <th mat-header-cell *matHeaderCellDef> {{ 'tecnico_acoes' | translate }} </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tecnico_acoes' | translate }} </th>
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button aria-label="icon-button with edit icon" (click)="editTecnico(element)">
             <mat-icon>edit</mat-icon>
