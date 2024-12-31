@@ -1,16 +1,22 @@
 <div class="filter-container ">
   <h2>{{ 'titulo_lista_tecnico' | translate }}</h2>
   <mat-form-field class="custom-box-shadow">
-    <button type="button" (click)="onClearFilter()" [disabled]="!ableClearFilter()" class="clear" mat-stroked-button>{{ 'tecnico_limpa' | translate }}</button>
+    <button type="button" (click)="onClearFilter()" [disabled]="!ableClearFilter()" class="clear"
+      mat-stroked-button>{{ 'tecnico_limpa' | translate }}</button>
     <mat-label>{{ 'tecnico_filtro' | translate }}</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="{{ 'placeholder_lista_tecnico' | translate }}" #input>
   </mat-form-field>
 
   <div class="crud-tecnico">
-    <button type="button" (click)="onAdd()" class="primary custom-box-shadow" mat-stroked-button>{{ 'tecnico_cria' | translate }}</button>
-    <button type="button" (click)="onEdit()" class="primary custom-box-shadow" mat-stroked-button>{{ 'tecnico_edita' | translate }}</button>
-    <button type="button" (click)="onDelete()" class="primary custom-box-shadow" mat-stroked-button>{{ 'tecnico_deleta' | translate }}</button>
+    <button type="button" (click)="onAdd()" class="primary custom-box-shadow"
+      mat-stroked-button>{{ 'tecnico_cria' | translate }}</button>
+
+    <mat-button-toggle-group [disabled]="!isAdmin" [value]="currentEditMode" class="toggle-group"
+      (change)="onEditMode($event)" multiple>
+      <mat-button-toggle value="ROLE_ADMIN">Editar</mat-button-toggle>
+    </mat-button-toggle-group>
   </div>
-  
-  <app-tecnico-list [dataSourceFiltered]="dataSourceFiltered | async"></app-tecnico-list>
+
+  <app-tecnico-list [dataSourceFiltered]="dataSourceFiltered | async"
+    [editStatusChanged]="editStatusChanged"></app-tecnico-list>
 </div>

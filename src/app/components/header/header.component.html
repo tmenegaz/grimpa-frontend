@@ -1,25 +1,24 @@
+<mat-toolbar class="header-container custom-box-shadow">
+  <button *ngIf="showButton" (click)="toggleDrawer()" mat-icon-button class="icon" aria-label="menu icon">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <div class="title">
+    <h2>{{ 'crimpa_tarefas' | translate }}</h2>
+  </div>
+  <span class="spacer"></span>
 
-  <mat-toolbar class="header-container custom-box-shadow">
-    <button  *ngIf="showButton" (click)="toggleDrawer()" mat-icon-button class="icon" aria-label="menu icon">
-      <mat-icon>menu</mat-icon>
+  <div class="buttons-right">
+    <mat-button-toggle-group [value]="currentLanguage" class="toggle-group" (change)="toggleLanguage($event)">
+      <mat-button-toggle value="en">EN</mat-button-toggle>
+      <mat-button-toggle value="pt">PT</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <button *ngIf="showButton" mat-icon-button class="icon favorite-icon" aria-label="icon-button with heart icon">
+      <mat-icon>favorite</mat-icon>
     </button>
-    <div class="title">
-      <h2>{{ 'crimpa_tarefas' | translate }}</h2>
-    </div>
-    <span class="spacer"></span>
 
-    <div class="buttons-right">      
-      <mat-button-toggle-group [value]="currentLanguage" class="toggle-group" (change)="toggleLanguage($event)">
-        <mat-button-toggle value="en">EN</mat-button-toggle>
-        <mat-button-toggle value="pt">PT</mat-button-toggle>
-      </mat-button-toggle-group>
-      
-      <button *ngIf="showButton" mat-icon-button class="icon favorite-icon" aria-label="icon-button with heart icon">
-        <mat-icon>favorite</mat-icon>
-      </button>
-      
-      <button *ngIf="showButton" mat-icon-button class="icon" aria-label="icon-button with share icon">
-        <mat-icon>share</mat-icon>
-      </button>
-    </div>
-  </mat-toolbar>
+    <button *ngIf="showButton" mat-icon-button class="icon" aria-label="icon-button with share icon">
+      <mat-icon>share</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>

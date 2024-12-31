@@ -1,18 +1,18 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, finalize, of, Subject } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { HeaderComponent } from '~components/header/header.component';
-import { Tecnico } from '~components/tecnico/entity/tecnico';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 import { SharedModule } from '~shared/shared.module';
-import { currentDate, isAdmin } from '~shared/utils';
+import { currentDate, isAdmin, setPerfisValue } from '~shared/utils';
+import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
 import { AuthService } from '~src/app/config/login/service/auth.service';
-import { Perfil } from '~src/app/enums/perfil.enum';
-import { Location } from '@angular/common';
-import { noNumbersValidator } from '~src/app/validators/nome.validator';
 import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
+import { Perfil } from '~src/app/enums/perfil.enum';
+import { noNumbersValidator } from '~src/app/validators/nome.validator';
+
 
 
 @Component({
@@ -22,34 +22,66 @@ import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
   styleUrl: './tecnico-form.component.css',
   standalone: true,
 })
-export class TecnicoFormComponent  implements OnInit {
+export class TecnicoFormComponent implements OnInit {
 
   tecnicoForm: FormGroup;
-  selectedPefil = [];
+  selectedPefil: string[] = [];
   isAdmin: boolean;
   isLoading = false
 
   private destroy$ = new Subject<void>();
 
-  perfilControl = new FormControl();
-  perfis = Object.keys(Perfil).filter(key => isNaN(Number(key)) 
-  && Perfil[key as keyof typeof Perfil] !== Perfil.CLIENTE
+  perfis = Object.keys(Perfil).filter(key => isNaN(Number(key))
+    && Perfil[key as keyof typeof Perfil] !== Perfil.CLIENTE
   );
 
+  isEdit = false;
+
   tecnico: Tecnico;
+  tecnicoId: string;
 
   constructor(
     private readonly router: Router,
+    private route: ActivatedRoute,
     private toastr: ToastrService,
     private tecnicoService: TecnicoService,
     private authService: AuthService,
-    private location: Location,
     @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
   ) { }
 
   ngOnInit(): void {
     this.tecnicoForm = this.setTecnicoForm();
     this.isAdmin = isAdmin(this.authService);
+
+    this.route.params
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (params) => {
+          if (params['id'] && !this.tecnico) {
+            this.tecnicoId = params['id'];
+            this.isEdit = true;
+          }
+        },
+      });
+
+    this.route.data
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (data) => {
+          this.tecnico = data['tecnico'];
+          if (this.tecnico) {
+            this.tecnicoForm.patchValue(this.tecnico);
+          }
+        },
+        error: (error) => {
+          const erroMessage = error.message || 'Erro ao buscar técnico'
+          this.toastr.error(erroMessage, 'Erro');
+        }
+      });
   }
 
   setTecnicoForm(): FormGroup {
@@ -58,96 +90,130 @@ export class TecnicoFormComponent  implements OnInit {
       cpf: new FormControl(null, [Validators.required, Validators.minLength(14), Validators.maxLength(14)]),
       email: new FormControl(null, [Validators.required, Validators.email]),
       senha: new FormControl(null, [Validators.required, Validators.minLength(3)]),
-      perfis: new FormControl(null),
+      perfis: new FormControl([]),
       dataCriacao: new FormControl(currentDate),
     });
   }
 
-  validateControl(controlName: string, requiredMessage: string, invalidMessage: string): boolean { 
+  validateControl(controlName: string, requiredMessage: string, invalidMessage: string): boolean {
     const control = this.tecnicoForm.get(controlName);
-    
+
     if (!control.value || (control.touched && control.invalid)) {
-      const errorMessage = control.hasError('required') 
-      ? requiredMessage 
-      : invalidMessage;
+      const errorMessage = control.hasError('required')
+        ? requiredMessage
+        : invalidMessage;
 
       control.reset(null, { emitEvent: false });
       this.toastr.error(errorMessage);
       return true;
     }
-      return false;
-    }
+    return false;
+  }
 
-      get hasNomeErrors(): boolean {
-        return this.validateControl('nome', 'Nome obrigatório', 'Nome inválido'); 
-      }
-      get hasCpfErrors(): boolean {
-        return this.validateControl('cpf', 'CPF obrigatório', 'CPF inválido'); 
-      }
-      get hasPerfisErrors(): boolean {
-        return this.validateControl('perfis', 'Perfil obrigatório', 'Perfil inválido'); 
-      }
-      get hasEmailErrors(): boolean {
-        return this.validateControl('email', 'E-mail obrigatório', 'E-mail inválido'); 
-      }
-      get hasSenhaErrors(): boolean {
-        return this.validateControl('senha', 'Senha é obrigatória', ' Senha deve ter no mínimo 3 caracteres');
-      }
+  get hasNomeErrors(): boolean {
+    return this.validateControl('nome', 'Nome obrigatório', 'Nome inválido');
+  }
+  get hasCpfErrors(): boolean {
+    return this.validateControl('cpf', 'CPF obrigatório', 'CPF inválido');
+  }
+  get hasPerfisErrors(): boolean {
+    return this.validateControl('perfis', 'Perfil obrigatório', 'Perfil inválido');
+  }
+  get hasEmailErrors(): boolean {
+    return this.validateControl('email', 'E-mail obrigatório', 'E-mail inválido');
+  }
+  get hasSenhaErrors(): boolean {
+    return this.validateControl('senha', 'Senha é obrigatória', ' Senha deve ter no mínimo 3 caracteres');
+  }
 
   onSubmit(): void {
     this.isLoading = true;
-    let perfilValues = this.selectedPefil.map(
-      perfil => Perfil[perfil as keyof typeof Perfil]);
 
-      if (perfilValues.length === 0) {
-        perfilValues = [2];
-      }
-
-    this.tecnicoForm.get("perfis").patchValue(perfilValues);
+    setPerfisValue(this.tecnicoForm);
 
     if (
-      !this.hasNomeErrors 
-      && !this.hasCpfErrors 
+      !this.hasNomeErrors
+      && !this.hasCpfErrors
       && !this.hasPerfisErrors
       && !this.hasEmailErrors
       && !this.hasSenhaErrors
     ) {
-      this.tecnico = {... this.tecnicoForm.value};
+      this.tecnico = { ... this.tecnicoForm.value };
 
       this.tecnicoService.create(this.tecnico)
-      .pipe( 
-        catchError(error => {
-           console.error(error);
-           this.isLoading = false;
-            this.toastr.error('Erro ao cadastrar técnico', 'Erro');
-             return of(null);
-             }),
-              finalize(() => {
-                this.isLoading = false;
-                this.tecnicoForm.reset(null, {
-                  emitEvent: false,
-                });
-                this.router.navigate(["tecnicos"]);
-              })
-            )
-            .subscribe({ 
-              next: () => {
-                        this.isLoading = false;
-                        this.toastr.success('Success', 'Cadastro');
-                       } 
-                      });
-                        
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe({
+          next: (() => {
+            this.isLoading = false;
+            this.toastr.success('Success', 'Cadastro');
+            this.tecnicoForm.reset(null, {
+              emitEvent: false,
+            });
+            this.router.navigate(["tecnicos"]);
+          }),
+          error: (error) => {
+            this.isLoading = false;
+            const erroMessage = error.message || 'Erro ao cadastrar técnico';
+            this.toastr.error(erroMessage, 'Erro');
+
+          },
+        });
+    }
+  }
+
+  onEdit(): void {
+    this.isLoading = true;
+
+    setPerfisValue(this.tecnicoForm);
+
+    if (
+      !this.hasNomeErrors
+      && !this.hasCpfErrors
+      && !this.hasPerfisErrors
+      && !this.hasEmailErrors
+      && !this.hasSenhaErrors
+    ) {
+      this.tecnico = { ... this.tecnicoForm.value };
+
+      this.tecnicoService.update(this.tecnicoId, this.tecnico)
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe({
+          next: (() => {
+            this.isLoading = false;
+            this.toastr.success('Success', 'Cadastro');
+            this.tecnicoForm.reset(null, {
+              emitEvent: false,
+            });
+            this.router.navigate(["tecnicos"]);
+          }),
+          error: (error) => {
+            this.isLoading = false;
+            const erroMessage = error.message || 'Erro ao cadastrar técnico';
+            this.toastr.error(erroMessage, 'Erro');
+          },
+        });
+
     }
   }
 
   onCancel(): void {
     this.tecnicoForm.reset(null, { emitEvent: false });
-    this.location.back();
+    this.router.navigate(['tecnicos']);
   }
 
-  ngOnDestroy(): void { 
+  ngOnDestroy(): void {
     this.destroy$.next();
-    this.destroy$.complete(); 
+    this.destroy$.complete();
   }
 
 }

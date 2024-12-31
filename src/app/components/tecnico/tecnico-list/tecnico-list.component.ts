@@ -1,21 +1,29 @@
-import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, inject, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
+import { FooterComponent } from '~components/footer/footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
-import { formatProfiles, translateProfiles } from '~shared/utils';
-import { Tecnico } from '~src/app/components/tecnico/entity/tecnico';
+import { formatProfiles, isAdmin, isRoleAdmin, translateProfiles } from '~shared/utils';
+import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
+import { AuthService } from '~src/app/config/login/service/auth.service';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { LanguageService } from '~src/app/services/language.service';
+import { PaginationService } from '~src/app/services/pagination.service';
+import { RolesService } from '~src/app/services/roles.service';
+import { DeleteDialogComponent } from '../dialog/delete-dialog.component';
+import { TecnicoDto } from '../entity/tecnico.dto';
+import { Page } from '../page.interface';
 
 @Component({
   selector: 'app-tecnico-list',
-  imports: [SharedModule, PasswordMaskPipe],
+  imports: [SharedModule, PasswordMaskPipe, FooterComponent],
   templateUrl: './tecnico-list.component.html',
   styleUrl: './tecnico-list.component.css',
   standalone: true
@@ -27,7 +35,15 @@ export class TecnicoListComponent implements OnInit, OnChanges {
   @Input()
   dataSourceFiltered: string;
 
+  @Input()
+  editStatusChanged: string[];
+
+  readonly dialog = inject(MatDialog);
+
+  isAdmin: boolean;
   isLoading = true;
+  showIdColumn = false;
+  isEditMode = false;
 
   dataSource: MatTableDataSource<Tecnico>;
   private destroy$ = new Subject<void>;
@@ -37,61 +53,134 @@ export class TecnicoListComponent implements OnInit, OnChanges {
     private toastr: ToastrService,
     private languageService: LanguageService,
     private translate: TranslateService,
+    private paginationService: PaginationService,
+    private router: Router,
+    private rolesService: RolesService,
+    private authService: AuthService,
     @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
-  ) {}
+  ) { }
 
-  displayedColumns: string[] = ['id', 'nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes'];
+  displayedColumns: string[] = ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes'];
 
   ngOnInit(): void {
-    this.findAll();
+    this.loadTecnicos();
+
     this.languageService
-    .language$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: ((lang) => {
-        this.translate.use(lang);
-        this.findAll();
-      })
-    });
-  }
-  
-  ngOnChanges({ dataSourceFiltered }: SimpleChanges): void {    
-    if (dataSourceFiltered && this.dataSource) {
-      this.dataSource.filter = dataSourceFiltered.currentValue;           
-    }
-  }
-  
-  findAll(): void {
-    this.isLoading = true;
-    this.service.findAll()
-    .pipe(
-      takeUntil(this.destroy$)
-    )
-    .subscribe({
-      next: (tecnicos: Tecnico[]) => {
-        tecnicos.forEach(tecnico => {
-          tecnico.perfis = translateProfiles(tecnico.perfis, this.translate);
-        });
-        this.dataSource = new MatTableDataSource<Tecnico>(tecnicos);
-        
-        this.dataSource.paginator = this.paginator;
-        this.isLoading = false;
-      },
-      error: (error) => {
-      this.isLoading = false;
-        error.status === 403
-        ? this.toastr.error("A conexão expirou", "Erro de Autenticação")
-        : this.toastr.error("Tecnicos unlisted", "Error");
-      }
-    });
-  }
-  
-  formatProfiles(profiles: string[]): string {
-    return formatProfiles(profiles); 
+      .language$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ((lang) => {
+          this.translate.use(lang);
+          this.loadTecnicos();
+        })
+      });
+
+    this.paginationService.pageIndex$
+      .pipe(takeUntil(this.destroy$)).subscribe(
+        () => this.loadTecnicos());
+    this.paginationService.pageSize$
+      .pipe(takeUntil(this.destroy$)).subscribe(
+        () => this.loadTecnicos());
+
+    this.updateDisplayedColumns();
   }
 
-  ngOnDestroy(): void { 
+  ngOnChanges({ ...changes }: SimpleChanges): void {
+    if (changes['dataSourceFiltered'] && this.dataSource) {
+      this.dataSource.filter = changes['dataSourceFiltered'].currentValue;
+    }
+
+    if (changes['editStatusChanged'] && changes['editStatusChanged'].currentValue) {
+      this.updateDisplayedColumns();
+    }
+  }
+
+  loadTecnicos(): void {
+    this.isLoading = true;
+
+    const pageIndex = this.paginationService.getPageIndex();
+    const pageSize = this.paginationService.getPageSize();
+
+    this.service.findAll(pageIndex, pageSize)
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (tecnicosDto: Page<TecnicoDto>) => {
+          const tecnicos = tecnicosDto.content.map(Tecnico.fromDto);
+
+          tecnicos.forEach(tecnico => {
+            tecnico.perfis = translateProfiles(tecnico.perfis, this.translate);
+          });
+          this.dataSource = new MatTableDataSource<Tecnico>(tecnicos);
+
+          this.paginationService.setTotalElements(tecnicosDto.totalElements);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          error.status === 403
+            ? this.toastr.error("A conexão expirou", "Erro de Autenticação")
+            : this.toastr.error("Tecnicos unlisted", "Error");
+        }
+      });
+  }
+
+  formatProfiles(profiles: string[]): string {
+    return formatProfiles(profiles);
+  }
+
+  editTecnico(tecnico: Tecnico): void {
+    this.router.navigate(['tecnicos/editar', tecnico.id]);
+  }
+
+  deleteTecnico(tecnico: Tecnico): void {
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+      data: { tecnico: tecnico }
+    })
+
+    dialogRef.afterClosed().subscribe(
+      (result: boolean) => {
+        if (result) {
+          this.isLoading = true;
+          this.service.delete(tecnico.id)
+            .pipe(
+              takeUntil(this.destroy$)
+            )
+            .subscribe({
+              next: (() => {
+                this.isLoading = false;
+                this.toastr.success('Success', 'Cadastro');
+                this.loadTecnicos();
+
+              }),
+              error: (error) => {
+                this.isLoading = false;
+                const erroMessage = error.message || 'Erro ao cadastrar técnico';
+                this.toastr.error(erroMessage, 'Erro');
+              },
+            });
+        }
+      }
+    )
+  }
+
+  updateDisplayedColumns(): void {
+    this.isEditMode = isRoleAdmin(this.rolesService);
+    this.displayedColumns = this.isEditMode
+      ? ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes']
+      : ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao'];
+
+    this.isAdmin = isAdmin(this.authService);
+    this.displayedColumns = this.isAdmin
+      ? ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes']
+      : ['nome', 'cpf', 'email', 'perfis', 'dataCriacao'];
+
+
+  }
+
+  ngOnDestroy(): void {
     this.destroy$.next();
-    this.destroy$.complete(); 
+    this.destroy$.complete();
   }
 }

@@ -1,4 +1,6 @@
 .first-row {
   width: 90%;
-  background-color: rgb(235, 235, 235);
+  height: 33rem;
+  overflow: auto;
+  background-color: rgb(235, 235, 235, 0%);
 }

@@ -8,10 +8,10 @@ import { AuthService } from './auth.service';
 })
 export class AuthHeaderService {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   getHeaders(): HttpHeaders {
-    return new HttpHeaders({ 'Authorization': `Bearer ${this.authService.getToken()}` });
+    return new HttpHeaders({ 'Authorization': `Bearer ${this.authService.getTokenFromHeader()}` });
   }
 }
 

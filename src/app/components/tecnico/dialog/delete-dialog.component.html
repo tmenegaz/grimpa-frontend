@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Confirmação de Exclusão</h2>
+<mat-dialog-content>
+  <p>Quer mesmo excluir {{ data.tecnico.nome }}?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-button (click)="onConfirm()">Confirmar</button>
+</mat-dialog-actions>

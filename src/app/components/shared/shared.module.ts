@@ -12,6 +12,8 @@ import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxMaskDirective } from 'ngx-mask';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   imports: [
@@ -30,7 +32,8 @@ import { NgxMaskDirective } from 'ngx-mask';
     RouterModule,
     TranslateModule,
     MatProgressSpinnerModule,
-    
+    MatButtonToggleModule,
+    MatDialogModule,
   ],
   exports: [
     MatTableModule,
@@ -48,6 +51,8 @@ import { NgxMaskDirective } from 'ngx-mask';
     RouterModule,
     TranslateModule,
     MatProgressSpinnerModule,
+    MatButtonToggleModule,
+    MatDialogModule,
   ]
 })
 export class SharedModule { }

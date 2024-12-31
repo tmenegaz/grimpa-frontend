@@ -5,16 +5,16 @@ import { AuthService } from '~app/config/login/service/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const authService = inject(AuthService);
-  const authToken = authService.getToken();
+  const authToken = authService.getTokenFromHeader();
 
   if (authToken) {
     const clonedReq = req.clone({
-    headers: req.headers
-    .set('Authorization', `Bearer ${authToken}`)
-    .set('Content-Type', 'application/json')
-    .set('Accept', 'application/json')
-  });
-  return next(clonedReq);
+      headers: req.headers
+        .set('Authorization', `Bearer ${authToken}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+    });
+    return next(clonedReq);
   }
   return next(req);
 };

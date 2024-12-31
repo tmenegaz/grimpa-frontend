@@ -26,8 +26,8 @@ export class LoginComponent implements OnInit {
   isLoading = false;
 
   credenciais: Credenciais = {
-    email: null,
-    senha: null,
+    username: null,
+    password: null,
   }
 
   constructor(
@@ -44,81 +44,82 @@ export class LoginComponent implements OnInit {
 
   setLoginForm(): FormGroup {
     return new FormGroup({
-      email: new FormControl(null, [Validators.required, Validators.email]),
-      senha: new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      username: new FormControl(null, [Validators.required, Validators.email]),
+      password: new FormControl(null, [Validators.required, Validators.minLength(3)]),
     });
   }
 
-  validateControl(controlName: string, requiredMessage: string, invalidMessage: string): boolean { 
-    const control = this.loginForm.get(controlName); 
-    
+  validateControl(controlName: string, requiredMessage: string, invalidMessage: string): boolean {
+    const control = this.loginForm.get(controlName);
+
     if (!control.value || (control.touched && control.invalid)) {
-      const errorMessage = control.hasError('required') 
-      ? requiredMessage 
-      : invalidMessage;
+      const errorMessage = control.hasError('required')
+        ? requiredMessage
+        : invalidMessage;
 
       control.reset(null, { emitEvent: false });
       this.toastr.error(errorMessage);
       return true;
     }
-      return false;
+    return false;
+  }
+
+  get hasUsernameErrors(): boolean {
+    return this.validateControl('username', 'E-mail obrigatório', 'E-mail inválido');
+  }
+  get hasPasswordErrors(): boolean {
+    return this.validateControl('password', 'Senha é obrigatória', ' Senha deve ter no mínimo 3 caracteres');
+  }
+
+  onSubmit(): void {
+    this.isLoading = true;
+    if (
+      !this.hasUsernameErrors
+      && !this.hasPasswordErrors
+    ) {
+
+      this.credenciais = { ... this.loginForm.value };
+
+      this.authService.authenticate(this.credenciais)
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => {
+            this.isLoading = false;
+          }
+          ),
+        )
+        .subscribe({
+          next: (response: HttpResponse<string>) => {
+            const responseBody = response.body as unknown as { token: string };
+            const token = responseBody.token;
+
+            this.authService.succesFullLogin(token);
+
+            this.toastr.success('Success', 'Login');
+
+            this.loginForm.get('username').setValidators(null);
+            this.loginForm.get('password').setValidators(null);
+
+            this.loginForm.reset(null, { emitEvent: true });
+
+            this.isLoading = false;
+            localStorage.setItem('language', this.languageService.getCurrentLanguage() || 'pt')
+            this.router.navigate(["home"]);
+          },
+          error: () => {
+            this.isLoading = false;
+            this.toastr.error("Login: fail");
+          }
+        });
     }
-
-      get hasEmailErrors(): boolean {
-        return this.validateControl('email', 'E-mail obrigatório', 'E-mail inválido'); 
-      }
-      get hasSenhaErrors(): boolean {
-        return this.validateControl('senha', 'Senha é obrigatória', ' Senha deve ter no mínimo 3 caracteres');
-      }
-
-      onSubmit(): void {
-        this.isLoading = true;
-        if (
-          !this.hasEmailErrors
-          && !this.hasSenhaErrors
-        ) {
-          
-          this.credenciais = { ... this.loginForm.value };
-
-          this.authService.authenticate(this.credenciais)
-          .pipe(
-            takeUntil(this.destroy$),
-            finalize(() => {
-              this.isLoading = false;
-            }
-            ),
-          )
-          .subscribe({
-            next: (response: HttpResponse<string>) => {
-                const token = response.headers.get('Authorization');
-
-                this.authService.succesFullLogin(token.substring(7));
-
-                this.toastr.success('Success', 'Login');
-
-                this.loginForm.get('email').setValidators(null);
-                this.loginForm.get('senha').setValidators(null);
-
-                this.loginForm.reset(null, { emitEvent: true });
-
-                this.isLoading = false;
-                localStorage.setItem('language', this.languageService.getCurrentLanguage() || 'pt')
-                this.router.navigate(["home"]);
-              },
-              error: () => {
-                this.isLoading = false;
-                this.toastr.error("Login: fail");
-              }
-            });          
-        } 
-    }
+  }
 
   onCancel(): void {
     this.loginForm.reset(null, { emitEvent: false });
   }
 
-  ngOnDestroy(): void { 
+  ngOnDestroy(): void {
     this.destroy$.next();
-    this.destroy$.complete(); 
+    this.destroy$.complete();
   }
 }

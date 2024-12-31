@@ -3,8 +3,10 @@
   "tecnico_perfil": "Perfil",
   "ADMIN": "Admin",
   "TECNICO": "Técnico",
+  "AUXILIAR": "Auxiliar",
   "CLIENTE": "Cliente",
   "tecnico_cliente": "Cliente",
+  "tecnico_auxiliar": "Auxiliar",
   "tecnico_nome": "Nome",
   "tecnico_senha": "Senha",
   "tecnico_cpf": "CPF",
@@ -23,5 +25,8 @@
   "titulo_login_tecnico": "Acessa as tarefas do Grimpa",
   "titulo_cadastro_tecnico": "Cadastro de novo técnico",
   "placeholder_lista_tecnico": "Digite um nome, número, perfil ou data",
-  "placeholder_nome_tecnico": "Seu nome"
+  "placeholder_nome_tecnico": "Seu nome",
+  "labe_paginacao_quantidade": "Item por página",
+  "labe_paginacao_preposocao": "de"
+
 }

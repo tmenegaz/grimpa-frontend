@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { SharedModule } from '~components/shared/shared.module';
 import { DrawerService } from '~src/app/services/drawer.service';
@@ -8,7 +7,7 @@ import { RouteService } from '~src/app/services/route.service';
 
 @Component({
   selector: 'app-header',
-  imports: [SharedModule, MatToolbarModule, MatButtonToggleModule],
+  imports: [SharedModule, MatToolbarModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
   standalone: true,
@@ -22,13 +21,13 @@ export class HeaderComponent implements OnInit {
     private routeService: RouteService,
     private drawerService: DrawerService,
     private languageService: LanguageService,
-  ){}
+  ) { }
 
   ngOnInit(): void {
     this.routeService.getCurrentRoute().subscribe((route) => {
       this.showButton = route !== "/login";
     });
-    
+
     this.currentLanguage = this.languageService.getCurrentLanguage() || 'pt';
   }
 

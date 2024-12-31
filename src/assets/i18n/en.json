@@ -3,8 +3,10 @@
   "tecnico_perfil": "Profile",
   "ADMIN": "Admin",
   "TECNICO": "Technician",
+  "AUXILIAR": "Assistant",
   "CLIENTE": "Client",
   "tecnico_cliente": "Client",
+  "tecnico_auxiliar": "Assistant",
   "tecnico_nome": "Name",
   "tecnico_senha": "Password",
   "tecnico_cpf": "CPF(Brazilian id)",
@@ -23,5 +25,7 @@
   "titulo_login_tecnico": "Access the Grimpa tasks",
   "titulo_cadastro_tecnico": "New technician registration",
   "placeholder_lista_tecnico": "Type a name, number, profile or date",
-  "placeholder_nome_tecnico": "Your name"
+  "placeholder_nome_tecnico": "Your name",
+  "labe_paginacao_quantidade": "Items per page",
+  "labe_paginacao_preposocao": "of"
 }

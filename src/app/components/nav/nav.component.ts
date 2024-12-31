@@ -21,29 +21,30 @@ import { DrawerService } from '~src/app/services/drawer.service';
     HeaderComponent
   ]
 })
-    export class NavComponent implements OnInit, AfterViewInit {
+export class NavComponent implements OnInit, AfterViewInit {
 
-      @ViewChild('drawer') drawer: MatDrawer;
-      
-      constructor(
-        private readonly router: Router,
-        private toastr: ToastrService,
-        private drawerService: DrawerService,
-      ) {}
-      
-      ngOnInit(): void {
-    }
-    
-    ngAfterViewInit(): void {
-      this.drawerService.setDrawer(this.drawer)
-    }
+  @ViewChild('drawer') drawer: MatDrawer;
 
+  constructor(
+    private readonly router: Router,
+    private toastr: ToastrService,
+    private drawerService: DrawerService,
+  ) { }
 
-    
-
-    logout(): void {
-      localStorage.removeItem('token');
-      this.toastr.success("Success", "Logout")
-      this.router.navigate(['login']);
-    }
+  ngOnInit(): void {
   }
+
+  ngAfterViewInit(): void {
+    this.drawerService.setDrawer(this.drawer)
+  }
+
+
+
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('roles');
+    this.toastr.success("Success", "Logout")
+    this.router.navigate(['login']);
+  }
+}
