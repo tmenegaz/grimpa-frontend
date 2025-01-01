@@ -42,6 +42,14 @@ export function isString(value: any): boolean {
   return typeof value === 'string' || value instanceof String;
 }
 
+export function getEnumKeyByValue(
+  enumObj: any, value: number | string
+):
+  string | undefined {
+  const keys = Object.keys(enumObj).filter(k => enumObj[k] === value);
+  return keys.length > 0 ? keys[0] : undefined;
+}
+
 export function isArray(value: any): boolean {
   return Array.isArray(value);
 }

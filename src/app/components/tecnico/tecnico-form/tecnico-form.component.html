@@ -41,7 +41,7 @@
 
       <div class="container-submit">
         <button type="submit" [disabled]="tecnicoForm.invalid" class="primary custom-box-shadow"
-          mat-stroked-button>{{ 'tecnico_cria' | translate }}</button>
+          mat-stroked-button>{{isEdit ? ('tecnico_edita' | translate) : ('tecnico_cria' | translate) }}</button>
         <a (click)="onCancel()" class="custom-box-shadow" mat-stroked-button
           routerLink="home">{{ 'tecnico_cancela' | translate }}</a>
       </div>

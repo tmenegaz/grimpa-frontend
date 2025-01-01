@@ -7,12 +7,11 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
-import { FooterComponent } from '~components/footer/footer.component';
+import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 import { formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
-import { AuthService } from '~src/app/config/login/service/auth.service';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { LanguageService } from '~src/app/services/language.service';
@@ -24,7 +23,7 @@ import { Page } from '../page.interface';
 
 @Component({
   selector: 'app-tecnico-list',
-  imports: [SharedModule, PasswordMaskPipe, FooterComponent],
+  imports: [SharedModule, PasswordMaskPipe, TabFooterComponent],
   templateUrl: './tecnico-list.component.html',
   styleUrl: './tecnico-list.component.css',
   standalone: true
@@ -58,7 +57,6 @@ export class TecnicoListComponent implements OnInit, OnChanges {
     private paginationService: PaginationService,
     private router: Router,
     private rolesService: RolesService,
-    private authService: AuthService,
     @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
   ) { }
 

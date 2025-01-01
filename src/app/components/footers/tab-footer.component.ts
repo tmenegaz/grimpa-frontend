@@ -6,13 +6,13 @@ import { translateInstant } from '~shared/utils';
 import { PaginationService } from '~src/app/services/pagination.service';
 
 @Component({
-  selector: 'app-footer',
+  selector: 'app-tab-footer',
   standalone: true,
   imports: [SharedModule],
-  templateUrl: './footer.component.html',
-  styleUrls: ['./footer.component.css']
+  templateUrl: './tab-footer.component.html',
+  styleUrls: ['./tab-footer.component.css']
 })
-export class FooterComponent implements OnInit {
+export class TabFooterComponent implements OnInit {
   length: number;
   pageSize: number;
   pageIndex: number;

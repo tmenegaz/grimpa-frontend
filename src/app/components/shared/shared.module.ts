@@ -15,6 +15,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatButtonToggleModule,
     MatDialogModule,
     MatSortModule,
+    MatTooltipModule,
   ],
   exports: [
     MatTableModule,
@@ -56,6 +58,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatButtonToggleModule,
     MatDialogModule,
     MatSortModule,
+    MatTooltipModule,
   ]
 })
 export class SharedModule { }
