@@ -1,0 +1,50 @@
+<div *ngIf="isLoading" class="spinner-container">
+  <mat-progress-spinner class="spinner-margin" [strokeWidth]="spinnerConfig.strokeWidth" [mode]="spinnerConfig.mode"
+    [value]="spinnerConfig.value"></mat-progress-spinner>
+</div>
+
+<div *ngIf="!isLoading" class="cliente-container">
+  <app-header></app-header>
+  <div class="form-container custom-box-shadow">
+    <form [formGroup]="clienteForm" (ngSubmit)="isEdit ? onEdit() : onSubmit()" class="form">
+      <h2>{{ 'titulo_cadastro_cliente' | translate }}</h2>
+
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'cliente_nome' | translate }}</mat-label>
+        <input formControlName="nome" name="nome" matInput placeholder="{{ 'placeholder_nome_cliente' | translate }}"
+          type="text">
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'cliente_cpf' | translate }}</mat-label>
+        <input formControlName="cpf" name="cpf" matInput placeholder="xxx.xxx.xxx-xx" type="text" mask="000.000.000-00">
+      </mat-form-field>
+
+      <ng-container *ngIf="isAdmin">
+        <mat-form-field class="full-width">
+          <mat-label>{{ 'cliente_perfil' | translate }}</mat-label>
+          <mat-select formControlName="perfis" multiple name="perfil"><mat-option *ngFor="let perfil of perfis"
+              [value]="perfil">{{ perfil }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'cliente_email' | translate }}</mat-label>
+        <input formControlName="email" name="email" matInput placeholder="Ex. email@provedor.com" type="email">
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'cliente_senha' | translate }}</mat-label>
+        <input formControlName="senha" name="senha" matInput placeholder="Ex. 123abcABC!&_" type="password">
+      </mat-form-field>
+
+      <div class="container-submit">
+        <button type="submit" [disabled]="clienteForm.invalid" class="primary custom-box-shadow"
+          mat-stroked-button>{{isEdit ? ('cliente_edita' | translate) : ('cliente_cria' | translate) }}</button>
+        <a (click)="onCancel()" class="custom-box-shadow" mat-stroked-button
+          routerLink="home">{{ 'cliente_cancela' | translate }}</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -10,16 +10,16 @@ import { Subject, takeUntil } from 'rxjs';
 import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
+import { Page } from '~interfaces/page.interface';
 import { formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
+import { DeleteDialogComponent } from '~src/app/config/dialog/delete-dialog.component';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { LanguageService } from '~src/app/services/language.service';
 import { PaginationService } from '~src/app/services/pagination.service';
 import { RolesService } from '~src/app/services/roles.service';
-import { DeleteDialogComponent } from '../dialog/delete-dialog.component';
 import { TecnicoDto } from '../entity/tecnico.dto';
-import { Page } from '../page.interface';
 
 @Component({
   selector: 'app-tecnico-list',
@@ -137,7 +137,7 @@ export class TecnicoListComponent implements OnInit, OnChanges {
 
   deleteTecnico(tecnico: Tecnico): void {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
-      data: { tecnico: tecnico }
+      data: { nome: tecnico?.nome }
     })
 
     dialogRef.afterClosed().subscribe(

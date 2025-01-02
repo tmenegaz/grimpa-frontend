@@ -1,0 +1,22 @@
+.filter-container {
+  margin: 8rem auto auto 8rem;
+}
+
+.crud-cliente {
+  padding: 2rem 0 2rem 2rem;
+}
+
+button {
+  margin: 0 1rem 0 0;
+}
+
+.clear {
+  display: block;
+  position: absolute;
+  top: 15%;
+  left: 90%;
+}
+
+mat-form-field {
+  width: 90%;
+}

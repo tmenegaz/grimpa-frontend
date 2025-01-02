@@ -2,15 +2,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { AuthService } from '~app/config/login/service/auth.service';
-import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
+import { Cliente } from '~src/app/components/cliente/entity/cliente.model';
 import { API_CONFIG, AuthHeaderService } from '~src/app/config/login/service/auth-header.service';
-import { TecnicoDto } from '../entity/tecnico.dto';
+import { ClienteDto } from '../entity/cliente.dto';
 import { Page } from '~interfaces/page.interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TecnicoService {
+export class ClienteService {
 
 
   constructor(
@@ -19,12 +19,12 @@ export class TecnicoService {
     private authHeaderService: AuthHeaderService
   ) { }
 
-  findAll(page: number, size: number): Observable<Page<TecnicoDto>> {
+  findAll(page: number, size: number): Observable<Page<ClienteDto>> {
     const headers = this.authHeaderService.getHeaders();
 
     return this.http
-      .get<Page<TecnicoDto>>(
-        `${API_CONFIG.baseURL}/tecnicos?page=${page}&size=${size}`, { headers }
+      .get<Page<ClienteDto>>(
+        `${API_CONFIG.baseURL}/clientes?page=${page}&size=${size}`, { headers }
       )
       .pipe(
         catchError((error: HttpErrorResponse) => {
@@ -36,11 +36,11 @@ export class TecnicoService {
       );
   }
 
-  create(tecnico: Tecnico): Observable<Tecnico> {
+  create(cliente: Cliente): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
 
     return this.http
-      .post<Tecnico>(`${API_CONFIG.baseURL}/tecnicos`, tecnico,
+      .post<Cliente>(`${API_CONFIG.baseURL}/clientes`, cliente,
         { headers }
       )
       .pipe(
@@ -53,11 +53,11 @@ export class TecnicoService {
       );
   }
 
-  update(id: string, tecnico: Tecnico): Observable<Tecnico> {
+  update(id: string, cliente: Cliente): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
 
     return this.http
-      .put<Tecnico>(`${API_CONFIG.baseURL}/tecnicos/${id}`, tecnico,
+      .put<Cliente>(`${API_CONFIG.baseURL}/clientes/${id}`, cliente,
         { headers }
       )
       .pipe(
@@ -70,9 +70,9 @@ export class TecnicoService {
       );
   }
 
-  findById(id: string | number): Observable<Tecnico> {
+  findById(id: string | number): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
-    return this.http.get<Tecnico>(`${API_CONFIG.baseURL}/tecnicos/${id}`,
+    return this.http.get<Cliente>(`${API_CONFIG.baseURL}/clientes/${id}`,
       { headers })
       .pipe(catchError((error: HttpErrorResponse): Observable<never> => {
         if (error.status === 403) {
@@ -82,9 +82,9 @@ export class TecnicoService {
       }));
   }
 
-  delete(id: string | number): Observable<Tecnico> {
+  delete(id: string | number): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
-    return this.http.delete<Tecnico>(`${API_CONFIG.baseURL}/tecnicos/${id}`,
+    return this.http.delete<Cliente>(`${API_CONFIG.baseURL}/clientes/${id}`,
       { headers })
       .pipe(catchError((error: HttpErrorResponse): Observable<never> => {
         if (error.status === 403) {
