@@ -74,7 +74,8 @@ export class ClienteFormComponent implements OnInit {
       .subscribe({
         next: (data) => {
           const clienteDto: ClienteDto = data['cliente'];
-          if (this.cliente) {
+
+          if (clienteDto) {
             this.cliente = Cliente.fromDto(clienteDto);
             this.clienteForm.patchValue(this.cliente);
           }

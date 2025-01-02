@@ -74,7 +74,7 @@ export class TecnicoFormComponent implements OnInit {
       .subscribe({
         next: (data) => {
           const tecnicoDto: TecnicoDto = data['tecnico'];
-          if (this.tecnico) {
+          if (tecnicoDto) {
             this.tecnico = Tecnico.fromDto(tecnicoDto);
             this.tecnicoForm.patchValue(this.tecnico);
           }
