@@ -12,6 +12,7 @@ import { AuthService } from '~src/app/config/login/service/auth.service';
 import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { Perfil } from '~src/app/enums/perfil.enum';
 import { noNumbersValidator } from '~src/app/validators/nome.validator';
+import { ClienteDto } from '../entity/cliente.dto';
 
 
 
@@ -38,7 +39,7 @@ export class ClienteFormComponent implements OnInit {
   isEdit = false;
 
   cliente: Cliente;
-  clienteId: string;
+  clienteId: Partial<Cliente> = { id: null };
 
   constructor(
     private readonly router: Router,
@@ -60,7 +61,7 @@ export class ClienteFormComponent implements OnInit {
       .subscribe({
         next: (params) => {
           if (params['id'] && !this.cliente) {
-            this.clienteId = params['id'];
+            this.clienteId.id = params['id'];
             this.isEdit = true;
           }
         },
@@ -72,8 +73,9 @@ export class ClienteFormComponent implements OnInit {
       )
       .subscribe({
         next: (data) => {
-          this.cliente = data['cliente'];
+          const clienteDto: ClienteDto = data['cliente'];
           if (this.cliente) {
+            this.cliente = Cliente.fromDto(clienteDto);
             this.clienteForm.patchValue(this.cliente);
           }
         },
@@ -180,7 +182,7 @@ export class ClienteFormComponent implements OnInit {
     ) {
       this.cliente = { ... this.clienteForm.value };
 
-      this.clienteService.update(this.clienteId, this.cliente)
+      this.clienteService.update(this.clienteId.id, this.cliente)
         .pipe(
           takeUntil(this.destroy$),
           finalize(() => {

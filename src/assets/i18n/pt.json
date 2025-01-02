@@ -54,5 +54,6 @@
   "titulo_login_cliente": "Acessa as tarefas do Grimpa",
   "titulo_cadastro_cliente": "Cadastro de novo cliente",
   "placeholder_lista_cliente": "Digite um nome, número, perfil ou data",
-  "placeholder_nome_cliente": "Seu nome"
+  "placeholder_nome_cliente": "Seu nome",
+  "privilegio_admin": "Privilégio do administrador"
 }

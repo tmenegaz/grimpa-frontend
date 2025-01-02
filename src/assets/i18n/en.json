@@ -54,5 +54,6 @@
   "titulo_login_cliente": "Access the Grimpa tasks",
   "titulo_cadastro_cliente": "New client registration",
   "placeholder_lista_cliente": "Type a name, number, profile or date",
-  "placeholder_nome_cliente": "Your name"
+  "placeholder_nome_cliente": "Your name",
+  "privilegio_admin": "Admin privilege"
 }

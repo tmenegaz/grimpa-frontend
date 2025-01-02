@@ -12,6 +12,7 @@ import { AuthService } from '~src/app/config/login/service/auth.service';
 import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { Perfil } from '~src/app/enums/perfil.enum';
 import { noNumbersValidator } from '~src/app/validators/nome.validator';
+import { TecnicoDto } from '../entity/tecnico.dto';
 
 
 
@@ -38,7 +39,7 @@ export class TecnicoFormComponent implements OnInit {
   isEdit = false;
 
   tecnico: Tecnico;
-  tecnicoId: string;
+  tecnicoId: Partial<Tecnico> = { id: null };
 
   constructor(
     private readonly router: Router,
@@ -60,7 +61,7 @@ export class TecnicoFormComponent implements OnInit {
       .subscribe({
         next: (params) => {
           if (params['id'] && !this.tecnico) {
-            this.tecnicoId = params['id'];
+            this.tecnicoId.id = params['id'];
             this.isEdit = true;
           }
         },
@@ -72,8 +73,9 @@ export class TecnicoFormComponent implements OnInit {
       )
       .subscribe({
         next: (data) => {
-          this.tecnico = data['tecnico'];
+          const tecnicoDto: TecnicoDto = data['tecnico'];
           if (this.tecnico) {
+            this.tecnico = Tecnico.fromDto(tecnicoDto);
             this.tecnicoForm.patchValue(this.tecnico);
           }
         },
@@ -180,7 +182,7 @@ export class TecnicoFormComponent implements OnInit {
     ) {
       this.tecnico = { ... this.tecnicoForm.value };
 
-      this.tecnicoService.update(this.tecnicoId, this.tecnico)
+      this.tecnicoService.update(this.tecnicoId.id, this.tecnico)
         .pipe(
           takeUntil(this.destroy$),
           finalize(() => {

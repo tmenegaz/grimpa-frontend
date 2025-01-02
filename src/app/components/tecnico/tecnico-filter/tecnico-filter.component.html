@@ -12,8 +12,10 @@
       mat-stroked-button>{{ 'tecnico_cria' | translate }}</button>
 
     <mat-button-toggle-group [disabled]="!isAdmin" [value]="currentEditMode" class="toggle-group"
-      (change)="onEditMode($event)" multiple>
-      <mat-button-toggle value="ROLE_ADMIN">{{ 'cliente_edita' | translate }}</mat-button-toggle>
+      (change)="onEditMode($event)" multiple [matTooltipDisabled]="isAdmin"
+      [matTooltip]="('privilegio_admin' | translate)">
+      <mat-button-toggle value="ROLE_ADMIN">{{ 'cliente_edita' | translate }}
+      </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 

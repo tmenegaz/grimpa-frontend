@@ -137,7 +137,7 @@ export class ClienteListComponent implements OnInit, OnChanges {
 
   deleteCliente(cliente: Cliente): void {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
-      data: { name: cliente?.nome }
+      data: { nome: cliente?.nome }
     })
 
     dialogRef.afterClosed().subscribe(

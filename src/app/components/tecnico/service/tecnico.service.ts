@@ -53,7 +53,7 @@ export class TecnicoService {
       );
   }
 
-  update(id: string, tecnico: Tecnico): Observable<Tecnico> {
+  update(id: string | number, tecnico: Tecnico): Observable<Tecnico> {
     const headers = this.authHeaderService.getHeaders();
 
     return this.http

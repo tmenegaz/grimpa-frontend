@@ -53,7 +53,7 @@ export class ClienteService {
       );
   }
 
-  update(id: string, cliente: Cliente): Observable<Cliente> {
+  update(id: string | number, cliente: Cliente): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
 
     return this.http
