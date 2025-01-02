@@ -11,7 +11,7 @@ import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 import { Page } from '~interfaces/page.interface';
-import { formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
+import { className, formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
 import { DeleteDialogComponent } from '~src/app/config/dialog/delete-dialog.component';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
@@ -167,7 +167,7 @@ export class TecnicoListComponent implements OnInit, OnChanges {
   }
 
   updateDisplayedColumns(): void {
-    this.isEditMode = isRoleAdmin(this.rolesService);
+    this.isEditMode = isRoleAdmin(this.rolesService, className(Tecnico.name));
     this.displayedColumns = this.isEditMode
       ? ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes']
       : ['nome', 'cpf', 'email', 'perfis', 'dataCriacao'];

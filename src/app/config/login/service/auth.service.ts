@@ -59,8 +59,12 @@ export class AuthService {
     }
 
     decodedToken.roles.includes(Roles.ADMIN)
-      ? localStorage.setItem('role-toggle', JSON.stringify(Roles.ADMIN))
-      : localStorage.setItem('role-toggle', JSON.stringify(Roles.USER))
+      ? (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ADMIN)))
+      : localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.USER))
+
+    decodedToken.roles.includes(Roles.ADMIN)
+      ? (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ADMIN)))
+      : localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.USER))
 
   }
 

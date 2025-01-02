@@ -18,8 +18,8 @@ export function isAdmin(authService: AuthService): boolean {
   return roles ? roles.includes(Roles.ADMIN) : false;
 }
 
-export function isRoleAdmin(rolesService: RolesService): boolean {
-  const roles = rolesService.getCurrentRoles();
+export function isRoleAdmin(rolesService: RolesService, entity: string): boolean {
+  const roles = rolesService.getCurrentRoles(entity);
 
   return roles.includes(Roles.ADMIN);
 }
@@ -93,5 +93,9 @@ export function toggleClassBasedOnVisibility(renderer: Renderer2, element: HTMLE
   } else {
     removeClass(renderer, element, className);
   }
+}
+
+export function className(str: string): string {
+  return str.replace(/_/g, '').toLowerCase();
 }
 

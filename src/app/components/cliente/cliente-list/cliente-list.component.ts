@@ -11,7 +11,7 @@ import { ClienteService } from '~components/cliente/service/cliente.service';
 import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { Page } from '~interfaces/page.interface';
-import { formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
+import { className, formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
 import { Cliente } from '~src/app/components/cliente/entity/cliente.model';
 import { DeleteDialogComponent } from '~src/app/config/dialog/delete-dialog.component';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
@@ -167,7 +167,8 @@ export class ClienteListComponent implements OnInit, OnChanges {
   }
 
   updateDisplayedColumns(): void {
-    this.isEditMode = isRoleAdmin(this.rolesService);
+
+    this.isEditMode = isRoleAdmin(this.rolesService, className(Cliente.name));
     this.displayedColumns = this.isEditMode
       ? ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes']
       : ['nome', 'cpf', 'email', 'perfis', 'dataCriacao'];

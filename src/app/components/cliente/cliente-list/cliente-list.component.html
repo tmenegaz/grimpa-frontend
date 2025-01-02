@@ -46,11 +46,11 @@
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button aria-label="icon-button with edit icon" [matTooltip]="('cliente_edita' | translate)"
             (click)="editCliente(element)">
-            <mat-icon>edit</mat-icon>
+            <mat-icon fontIcon="edit"></mat-icon>
           </button>
           <button mat-icon-button aria-label="icon-button with delete icon"
             [matTooltip]="('cliente_deleta' | translate)" (click)="deleteCliente(element)">
-            <mat-icon>delete</mat-icon>
+            <mat-icon [style.color]="'#EA3323'" fontIcon="delete"></mat-icon>
           </button>
         </td>
       </ng-container>

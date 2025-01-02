@@ -2,11 +2,12 @@ import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '
 import { Router } from '@angular/router';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoListComponent } from '~components/tecnico/tecnico-list/tecnico-list.component';
-import { isAdmin } from '~shared/utils';
+import { className, isAdmin } from '~shared/utils';
 import { AuthService } from '~src/app/config/login/service/auth.service';
 import { Roles } from '~src/app/enums/roles.enum';
 import { DrawerService } from '~src/app/services/drawer.service';
 import { RolesService } from '~src/app/services/roles.service';
+import { Tecnico } from '../entity/tecnico.model';
 
 @Component({
   selector: 'app-tecnico-filter',
@@ -27,6 +28,7 @@ export class TecnicoFilterComponent implements OnInit {
   currentEditMode: string;
   filterValue: string;
   isAdmin: boolean;
+  name = className(Tecnico.name);
 
   constructor(
     private router: Router,
@@ -37,7 +39,7 @@ export class TecnicoFilterComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAdmin = isAdmin(this.authService);
-    [this.currentEditMode] = this.rolesService.getCurrentRoles() || [''];
+    [this.currentEditMode] = this.rolesService.getCurrentRoles(className(Tecnico.name)) || [''];
   }
 
   applyFilter(event: Event) {
@@ -61,11 +63,13 @@ export class TecnicoFilterComponent implements OnInit {
   }
 
   onEditMode(event: any): void {
+    const name = event.source.name;
     const roles = event.value.includes(Roles.ADMIN)
       ? [Roles.ADMIN]
       : [Roles.USER];
+
     this.editStatusChanged = roles;
-    this.rolesService.setRoles(roles);
+    this.rolesService.setRoles(name, roles);
   }
 
 }
