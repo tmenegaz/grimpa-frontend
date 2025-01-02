@@ -31,7 +31,7 @@ export class TecnicoService {
           if (error.status === 403) {
             this.authService.handleTokenExpiration();
           }
-          return throwError(() => error);
+          return throwError(() => error.error.message);
         })
       );
   }
@@ -48,7 +48,7 @@ export class TecnicoService {
           if (error.status === 403) {
             this.authService.handleTokenExpiration();
           }
-          return throwError(() => error);
+          return throwError(() => error.error.message);
         })
       );
   }
@@ -65,7 +65,7 @@ export class TecnicoService {
           if (error.status === 403) {
             this.authService.handleTokenExpiration();
           }
-          return throwError(() => error);
+          return throwError(() => error.error.message);
         })
       );
   }
@@ -78,7 +78,7 @@ export class TecnicoService {
         if (error.status === 403) {
           this.authService.handleTokenExpiration();
 
-        } return throwError(() => error);
+        } return throwError(() => error.error.message);
       }));
   }
 
@@ -90,7 +90,7 @@ export class TecnicoService {
         if (error.status === 403) {
           this.authService.handleTokenExpiration();
 
-        } return throwError(() => error);
+        } return throwError(() => error.error.message);
       }));
   }
 }

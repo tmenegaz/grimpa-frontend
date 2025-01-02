@@ -1,4 +1,4 @@
-<div *ngIf="isLoading" class="spinner-container">
+<div *ngIf="isLoading || clienteResolver.isLoading" class="spinner-container">
   <mat-progress-spinner class="spinner-margin" [strokeWidth]="spinnerConfig.strokeWidth" [mode]="spinnerConfig.mode"
     [value]="spinnerConfig.value"></mat-progress-spinner>
 </div>

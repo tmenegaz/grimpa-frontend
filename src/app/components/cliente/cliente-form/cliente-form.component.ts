@@ -13,12 +13,13 @@ import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { Perfil } from '~src/app/enums/perfil.enum';
 import { noNumbersValidator } from '~src/app/validators/nome.validator';
 import { ClienteDto } from '../entity/cliente.dto';
+import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 
 
 
 @Component({
   selector: 'app-cliente-form',
-  imports: [SharedModule, HeaderComponent],
+  imports: [SharedModule, HeaderComponent, PasswordMaskPipe],
   templateUrl: './cliente-form.component.html',
   styleUrl: './cliente-form.component.css',
   standalone: true,

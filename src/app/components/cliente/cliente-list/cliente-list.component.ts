@@ -20,6 +20,7 @@ import { LanguageService } from '~src/app/services/language.service';
 import { PaginationService } from '~src/app/services/pagination.service';
 import { RolesService } from '~src/app/services/roles.service';
 import { ClienteDto } from '../entity/cliente.dto';
+import { ClienteResolver } from '~src/app/app.routes';
 
 @Component({
   selector: 'app-cliente-list',
@@ -57,6 +58,7 @@ export class ClienteListComponent implements OnInit, OnChanges {
     private paginationService: PaginationService,
     private router: Router,
     private rolesService: RolesService,
+    public clienteResolver: ClienteResolver,
     @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
   ) { }
 
@@ -132,6 +134,10 @@ export class ClienteListComponent implements OnInit, OnChanges {
   }
 
   editCliente(cliente: Cliente): void {
+    if (this.clienteResolver) {
+      this.clienteResolver.isLoading = true;
+      this.router.navigate(['clientes/editar', cliente.id]);
+    }
     this.router.navigate(['clientes/editar', cliente.id]);
   }
 

@@ -36,7 +36,8 @@
 
       <mat-form-field class="full-width">
         <mat-label>{{ 'tecnico_senha' | translate }}</mat-label>
-        <input formControlName="senha" name="senha" matInput placeholder="Ex. 123abcABC!&_" type="password">
+        <input matInput formControlName="senha" name="senha" matInput placeholder="Ex. 123abcABC!&_" type="password"
+          [value]="isEdit ? (tecnicoForm.get('senha').value | passwordMask)  : ''">
       </mat-form-field>
 
       <div class="container-submit">

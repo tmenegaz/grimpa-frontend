@@ -13,12 +13,13 @@ import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
 import { Perfil } from '~src/app/enums/perfil.enum';
 import { noNumbersValidator } from '~src/app/validators/nome.validator';
 import { TecnicoDto } from '../entity/tecnico.dto';
+import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 
 
 
 @Component({
   selector: 'app-tecnico-form',
-  imports: [SharedModule, HeaderComponent],
+  imports: [SharedModule, HeaderComponent, PasswordMaskPipe],
   templateUrl: './tecnico-form.component.html',
   styleUrl: './tecnico-form.component.css',
   standalone: true,
@@ -160,7 +161,7 @@ export class TecnicoFormComponent implements OnInit {
           }),
           error: (error) => {
             this.isLoading = false;
-            const erroMessage = error.message || 'Erro ao cadastrar técnico';
+            const erroMessage = error || 'Erro ao cadastrar técnico';
             this.toastr.error(erroMessage, 'Erro');
 
           },
@@ -200,7 +201,7 @@ export class TecnicoFormComponent implements OnInit {
           }),
           error: (error) => {
             this.isLoading = false;
-            const erroMessage = error.message || 'Erro ao cadastrar técnico';
+            const erroMessage = error || 'Erro ao atualizar técnico';
             this.toastr.error(erroMessage, 'Erro');
           },
         });

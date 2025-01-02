@@ -20,6 +20,7 @@ import { LanguageService } from '~src/app/services/language.service';
 import { PaginationService } from '~src/app/services/pagination.service';
 import { RolesService } from '~src/app/services/roles.service';
 import { TecnicoDto } from '../entity/tecnico.dto';
+import { TecnicoResolver } from '~src/app/app.routes';
 
 @Component({
   selector: 'app-tecnico-list',
@@ -57,6 +58,7 @@ export class TecnicoListComponent implements OnInit, OnChanges {
     private paginationService: PaginationService,
     private router: Router,
     private rolesService: RolesService,
+    public tecnicoResolver: TecnicoResolver,
     @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
   ) { }
 
@@ -120,9 +122,10 @@ export class TecnicoListComponent implements OnInit, OnChanges {
         },
         error: (error) => {
           this.isLoading = false;
+          const erroMessage = error || 'Erro ao listar técnico';
           error.status === 403
-            ? this.toastr.error("A conexão expirou", "Erro de Autenticação")
-            : this.toastr.error("Tecnicos unlisted", "Error");
+            ? this.toastr.error(erroMessage, "Erro de Autenticação")
+            : this.toastr.error(erroMessage, "Erro");
         }
       });
   }
@@ -132,7 +135,10 @@ export class TecnicoListComponent implements OnInit, OnChanges {
   }
 
   editTecnico(tecnico: Tecnico): void {
-    this.router.navigate(['tecnicos/editar', tecnico.id]);
+    if (this.tecnicoResolver) {
+      this.tecnicoResolver.isLoading = true;
+      this.router.navigate(['tecnicos/editar', tecnico.id]);
+    }
   }
 
   deleteTecnico(tecnico: Tecnico): void {
@@ -157,7 +163,7 @@ export class TecnicoListComponent implements OnInit, OnChanges {
               }),
               error: (error) => {
                 this.isLoading = false;
-                const erroMessage = error.message || 'Erro ao cadastrar técnico';
+                const erroMessage = error || 'Erro ao cadastrar técnico';
                 this.toastr.error(erroMessage, 'Erro');
               },
             });
