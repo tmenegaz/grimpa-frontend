@@ -29,7 +29,8 @@ export class ClienteFormComponent implements OnInit {
   clienteForm: FormGroup;
   selectedPefil: string[] = [];
   isAdmin: boolean;
-  isLoading = false
+  isLoading = false;
+  hide = true;
 
   private destroy$ = new Subject<void>();
 
@@ -213,6 +214,10 @@ export class ClienteFormComponent implements OnInit {
   onCancel(): void {
     this.clienteForm.reset(null, { emitEvent: false });
     this.router.navigate(['clientes']);
+  }
+
+  onHide(): void {
+    this.hide = !this.hide;
   }
 
   ngOnDestroy(): void {

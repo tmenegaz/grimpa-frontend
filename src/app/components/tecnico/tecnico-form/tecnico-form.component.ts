@@ -29,7 +29,8 @@ export class TecnicoFormComponent implements OnInit {
   tecnicoForm: FormGroup;
   selectedPefil: string[] = [];
   isAdmin: boolean;
-  isLoading = false
+  isLoading = false;
+  hide = true;
 
   private destroy$ = new Subject<void>();
 
@@ -212,6 +213,10 @@ export class TecnicoFormComponent implements OnInit {
   onCancel(): void {
     this.tecnicoForm.reset(null, { emitEvent: false });
     this.router.navigate(['tecnicos']);
+  }
+
+  onHide(): void {
+    this.hide = !this.hide;
   }
 
   ngOnDestroy(): void {

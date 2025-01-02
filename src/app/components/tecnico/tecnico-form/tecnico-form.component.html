@@ -13,11 +13,13 @@
         <mat-label>{{ 'tecnico_nome' | translate }}</mat-label>
         <input formControlName="nome" name="nome" matInput placeholder="{{ 'placeholder_nome_tecnico' | translate }}"
           type="text">
+        <mat-icon matSuffix fontIcon="person_apron"></mat-icon>
       </mat-form-field>
 
       <mat-form-field class="full-width">
         <mat-label>{{ 'tecnico_cpf' | translate }}</mat-label>
         <input formControlName="cpf" name="cpf" matInput placeholder="xxx.xxx.xxx-xx" type="text" mask="000.000.000-00">
+        <mat-icon matSuffix fontIcon="fingerprint"></mat-icon>
       </mat-form-field>
 
       <ng-container *ngIf="isAdmin">
@@ -32,12 +34,17 @@
       <mat-form-field class="full-width">
         <mat-label>{{ 'tecnico_email' | translate }}</mat-label>
         <input formControlName="email" name="email" matInput placeholder="Ex. email@provedor.com" type="email">
+        <mat-icon matSuffix fontIcon="mail"></mat-icon>
       </mat-form-field>
 
       <mat-form-field class="full-width">
         <mat-label>{{ 'tecnico_senha' | translate }}</mat-label>
-        <input matInput formControlName="senha" name="senha" matInput placeholder="Ex. 123abcABC!&_" type="password"
-          [value]="isEdit ? (tecnicoForm.get('senha').value | passwordMask)  : ''">
+        <input matInput formControlName="senha" name="senha" placeholder="Ex. 123abcABC!&_"
+          [type]="hide ? 'password' : 'text'" [value]="isEdit ? (tecnicoForm.get('senha').value | passwordMask)  : ''">
+        <button type="button" mat-icon-button matSuffix (click)="onHide()" [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
       </mat-form-field>
 
       <div class="container-submit">
