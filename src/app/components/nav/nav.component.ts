@@ -44,6 +44,7 @@ export class NavComponent implements OnInit, AfterViewInit {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('roles');
+    localStorage.removeItem('sudo');
     this.toastr.success("Success", "Logout")
     this.router.navigate(['login']);
   }
