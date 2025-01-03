@@ -28,7 +28,7 @@ export class ClienteFormComponent implements OnInit {
 
   clienteForm: FormGroup;
   selectedPefil: string[] = [];
-  isAdmin: boolean;
+  isAdmin = false;
   isLoading = false;
   hide = true;
 

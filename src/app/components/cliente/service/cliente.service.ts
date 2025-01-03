@@ -82,6 +82,19 @@ export class ClienteService {
       }));
   }
 
+  findByEmail(email: string): Observable<ClienteDto> {
+    const headers = this.authHeaderService.getHeaders();
+
+    return this.http.get<ClienteDto>(`${API_CONFIG.baseURL}/clientes/email/${email}`,
+      { headers })
+      .pipe(catchError((error: HttpErrorResponse): Observable<never> => {
+        if (error.status === 403) {
+          this.authService.handleTokenExpiration();
+
+        } return throwError(() => error.error.message);
+      }));
+  }
+
   delete(id: string | number): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
     return this.http.delete<Cliente>(`${API_CONFIG.baseURL}/clientes/${id}`,

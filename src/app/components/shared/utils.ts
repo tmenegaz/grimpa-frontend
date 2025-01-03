@@ -18,6 +18,11 @@ export function isAdmin(authService: AuthService): boolean {
   return roles ? roles.includes(Roles.ADMIN) : false;
 }
 
+export function isUser(authService: AuthService): boolean {
+  const roles = authService.getCurrentUserRoles();
+  return roles ? roles.includes(Roles.USER) : false;
+}
+
 export function isRoleAdmin(rolesService: RolesService, entity: string): boolean {
   const roles = rolesService.getCurrentRoles(entity);
 

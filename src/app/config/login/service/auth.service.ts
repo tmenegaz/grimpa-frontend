@@ -51,6 +51,12 @@ export class AuthService {
     return null;
   }
 
+  getSub() {
+    const token = this.getTokenFromHeader();
+    const decodedToken = this.jwtService.decodeToken(token);
+    return decodedToken.sub;
+  }
+
   succesFullLogin(authToken: string): void {
     localStorage.setItem('token', authToken);
     const decodedToken = this.jwtService.decodeToken(authToken);
@@ -87,6 +93,9 @@ export class AuthService {
             break;
           case 'ROLE_USER':
             acc.push(Roles.USER);
+            break;
+          case 'ROLE_SUDO':
+            acc.push(Roles.SUDO);
             break;
         }
         return acc;
