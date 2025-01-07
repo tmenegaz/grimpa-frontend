@@ -2,10 +2,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { AuthService } from '~app/config/login/service/auth.service';
+import { Page } from '~interfaces/page.interface';
 import { Cliente } from '~src/app/components/cliente/entity/cliente.model';
 import { API_CONFIG, AuthHeaderService } from '~src/app/config/login/service/auth-header.service';
+import { FilePathDto } from '../../conta/entity/file-path.dto';
 import { ClienteDto } from '../entity/cliente.dto';
-import { Page } from '~interfaces/page.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +54,7 @@ export class ClienteService {
       );
   }
 
-  update(id: string | number, cliente: Cliente): Observable<Cliente> {
+  update(id: string, cliente: ClienteDto): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
 
     return this.http
@@ -70,7 +71,24 @@ export class ClienteService {
       );
   }
 
-  findById(id: string | number): Observable<Cliente> {
+  updateFilePath(id: string, filePahtDto: FilePathDto): Observable<ClienteDto> {
+    const headers = this.authHeaderService.getHeaders();
+
+    return this.http
+      .put<ClienteDto>(`${API_CONFIG.baseURL}/clientes/filePath/${id}`, filePahtDto,
+        { headers }
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse): Observable<never> => {
+          if (error.status === 403) {
+            this.authService.handleTokenExpiration();
+          }
+          return throwError(() => error);
+        })
+      );
+  }
+
+  findById(id: string): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
     return this.http.get<Cliente>(`${API_CONFIG.baseURL}/clientes/${id}`,
       { headers })
@@ -95,7 +113,20 @@ export class ClienteService {
       }));
   }
 
-  delete(id: string | number): Observable<Cliente> {
+  findAllByPerfil(perfil: number): Observable<ClienteDto[]> {
+    const headers = this.authHeaderService.getHeaders();
+
+    return this.http.get<ClienteDto[]>(`${API_CONFIG.baseURL}/clientes/perfis/${perfil}`,
+      { headers })
+      .pipe(catchError((error: HttpErrorResponse): Observable<never> => {
+        if (error.status === 403) {
+          this.authService.handleTokenExpiration();
+
+        } return throwError(() => error.error.message);
+      }));
+  }
+
+  delete(id: string): Observable<Cliente> {
     const headers = this.authHeaderService.getHeaders();
     return this.http.delete<Cliente>(`${API_CONFIG.baseURL}/clientes/${id}`,
       { headers })

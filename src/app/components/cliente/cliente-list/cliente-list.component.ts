@@ -11,7 +11,7 @@ import { ClienteService } from '~components/cliente/service/cliente.service';
 import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { Page } from '~interfaces/page.interface';
-import { className, formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
+import { className, convertPerfisToKey, formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
 import { Cliente } from '~src/app/components/cliente/entity/cliente.model';
 import { DeleteDialogComponent } from '~src/app/config/dialog/delete-dialog.component';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
@@ -21,6 +21,7 @@ import { PaginationService } from '~src/app/services/pagination.service';
 import { RolesService } from '~src/app/services/roles.service';
 import { ClienteDto } from '../entity/cliente.dto';
 import { ClienteResolver } from '~src/app/app.routes';
+import { Perfil } from '~src/app/enums/perfil.enum';
 
 @Component({
   selector: 'app-cliente-list',
@@ -112,7 +113,10 @@ export class ClienteListComponent implements OnInit, OnChanges {
           const clientes = clientesDto.content.map(Cliente.fromDto);
 
           clientes.forEach(cliente => {
-            cliente.perfis = translateProfiles(cliente.perfis, this.translate);
+            cliente.perfis = translateProfiles(
+              convertPerfisToKey(cliente.perfis),
+              this.translate)
+              .map(key => Perfil[key as keyof typeof Perfil]);
           });
           this.dataSource = new MatTableDataSource<Cliente>(clientes);
           this.dataSource.sort = this.sort;

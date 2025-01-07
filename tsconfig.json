@@ -11,6 +11,18 @@
       "~app/*": [
         "src/app/*"
       ],
+      "~services/*": [
+        "src/app/services/*"
+      ],
+      "~valdators/*": [
+        "src/app/valdators/*"
+      ],
+      "~enums/*": [
+        "src/app/enums/*"
+      ],
+      "~config/*": [
+        "src/app/config/*"
+      ],
       "~interfaces/*": [
         "src/app/interfaces/*"
       ],

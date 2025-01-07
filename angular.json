@@ -55,6 +55,11 @@
                 "glob": "**/*",
                 "input": "public/assets/img",
                 "output": "/assets/img"
+              },
+              { 
+                "glob": "**/*",
+                "input": "http://localhost:8080/public/assets/conta/img",
+                "output": "/assets/conta/img"
               }
             ],
             "styles": [

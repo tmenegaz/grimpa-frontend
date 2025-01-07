@@ -1,12 +1,15 @@
 mat-toolbar {
   max-width: -webkit-fill-available;
 }
+
 .spacer {
   flex: 1 2 auto;
 }
+
 .buttons-right {
   display: contents;
 }
+
 .icon {
   margin: 0 1% 0 0;
 }

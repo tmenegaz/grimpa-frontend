@@ -1,19 +1,20 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { ActivatedRouteSnapshot, provideRouter, Resolve, RouterStateSnapshot, Routes, withHashLocation } from '@angular/router';
-import { finalize, Observable, Subject, takeUntil, tap } from 'rxjs';
-import { ClienteFilterComponent } from './components/cliente/cliente-filter/cliente-filter.component';
-import { HomeComponent } from './components/home/home.component';
-import { LoginComponent } from './components/login/login.component';
-import { NavComponent } from './components/nav/nav.component';
-import { Tecnico } from './components/tecnico/entity/tecnico.model';
-import { TecnicoService } from './components/tecnico/service/tecnico.service';
-import { TecnicoFilterComponent } from './components/tecnico/tecnico-filter/tecnico-filter.component';
-import { TecnicoFormComponent } from './components/tecnico/tecnico-form/tecnico-form.component';
-import { authGuard } from './config/login/auth/auth.guard';
-import { ClienteFormComponent } from './components/cliente/cliente-form/cliente-form.component';
-import { Cliente } from './components/cliente/entity/cliente.model';
-import { ClienteService } from './components/cliente/service/cliente.service';
 import { ToastrService } from 'ngx-toastr';
+import { finalize, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { ClienteFilterComponent } from '~components/cliente/cliente-filter/cliente-filter.component';
+import { ClienteFormComponent } from '~components/cliente/cliente-form/cliente-form.component';
+import { Cliente } from '~components/cliente/entity/cliente.model';
+import { ClienteService } from '~components/cliente/service/cliente.service';
+import { ContaComponent } from '~components/conta/conta.component';
+import { HomeComponent } from '~components/home/home.component';
+import { LoginComponent } from '~components/login/login.component';
+import { NavComponent } from '~components/nav/nav.component';
+import { Tecnico } from '~components/tecnico/entity/tecnico.model';
+import { TecnicoService } from '~components/tecnico/service/tecnico.service';
+import { TecnicoFilterComponent } from '~components/tecnico/tecnico-filter/tecnico-filter.component';
+import { TecnicoFormComponent } from '~components/tecnico/tecnico-form/tecnico-form.component';
+import { authGuard } from './config/login/auth/auth.guard';
 
 @Injectable({
   providedIn: 'root'
@@ -102,6 +103,8 @@ export const routes: Routes = [
         { path: 'home', component: HomeComponent, canActivate: [authGuard] },
 
         { path: 'tecnicos', component: TecnicoFilterComponent },
+
+        { path: 'conta', component: ContaComponent },
 
         { path: "tecnicos/criar", component: TecnicoFormComponent },
 

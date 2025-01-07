@@ -4,6 +4,7 @@ import { SharedModule } from '~components/shared/shared.module';
 import { DrawerService } from '~src/app/services/drawer.service';
 import { LanguageService } from '~src/app/services/language.service';
 import { RouteService } from '~src/app/services/route.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -21,6 +22,7 @@ export class HeaderComponent implements OnInit {
     private routeService: RouteService,
     private drawerService: DrawerService,
     private languageService: LanguageService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -38,5 +40,9 @@ export class HeaderComponent implements OnInit {
   toggleLanguage(event: any): void {
     const lang = event.value;
     this.languageService.setLanguage(lang);
+  }
+
+  account(): void {
+    this.router.navigate(['/conta']);
   }
 }

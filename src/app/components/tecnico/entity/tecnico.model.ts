@@ -1,7 +1,7 @@
 import { TecnicoDto } from "./tecnico.dto";
 
 export class Tecnico {
-  id?: string | number;
+  id?: string;
   nome: string;
   cpf: string;
   email: string;
@@ -16,7 +16,7 @@ export class Tecnico {
     senha: string,
     perfis: string[],
     dataCriacao: Date | string,
-    id?: string | number,
+    id?: string,
   ) {
     this.id = id;
     this.nome = nome;

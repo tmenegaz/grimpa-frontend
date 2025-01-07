@@ -27,7 +27,6 @@ import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 export class ClienteFormComponent implements OnInit {
 
   clienteForm: FormGroup;
-  selectedPefil: string[] = [];
   isAdmin = false;
   isLoading = false;
   hide = true;
@@ -184,8 +183,9 @@ export class ClienteFormComponent implements OnInit {
       && !this.hasSenhaErrors
     ) {
       this.cliente = { ... this.clienteForm.value };
+      const clienteDto = this.cliente.toDto();
 
-      this.clienteService.update(this.clienteId.id, this.cliente)
+      this.clienteService.update(this.clienteId.id, clienteDto)
         .pipe(
           takeUntil(this.destroy$),
           finalize(() => {

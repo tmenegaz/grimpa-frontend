@@ -27,7 +27,6 @@ import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 export class TecnicoFormComponent implements OnInit {
 
   tecnicoForm: FormGroup;
-  selectedPefil: string[] = [];
   isAdmin: boolean;
   isLoading = false;
   hide = true;

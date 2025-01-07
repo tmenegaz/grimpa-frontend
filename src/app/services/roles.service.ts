@@ -17,6 +17,7 @@ export class RolesService implements OnInit {
   ngOnInit(): void {
     this.initializeRoles(className(Tecnico.name));
     this.initializeRoles(className(Cliente.name));
+    this.initializeRoles('sudo');
   }
 
   private initializeRoles(entity: string): void {

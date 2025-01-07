@@ -13,12 +13,9 @@
       <mat-button-toggle value="pt">PT</mat-button-toggle>
     </mat-button-toggle-group>
 
-    <button *ngIf="showButton" mat-icon-button class="icon favorite-icon" aria-label="icon-button with heart icon">
-      <mat-icon fontIcon="favorite"></mat-icon>
-    </button>
-
-    <button *ngIf="showButton" mat-icon-button class="icon" aria-label="icon-button with share icon">
-      <mat-icon fontIcon="share"></mat-icon>
+    <button *ngIf="showButton" (click)="account()" mat-icon-button class="icon favorite-icon"
+      aria-label="icon-button with heart icon">
+      <mat-icon fontIcon="account_circle"></mat-icon>
     </button>
   </div>
 </mat-toolbar>

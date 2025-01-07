@@ -65,21 +65,23 @@ export class AuthService {
     }
 
 
-    if (decodedToken.roles.includes(Roles.ADMIN)) {
-      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ADMIN)));
-      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ADMIN)));
-      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ADMIN)));
-    } else if (decodedToken.roles.includes(Roles.USER)) {
-      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.USER)));
-      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.USER)));
-      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.USER)));
-    } else if (decodedToken.roles.includes(Roles.SUDO)) {
+    if (decodedToken.roles.includes(Roles.SUDO)) {
       (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.SUDO)));
       (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.SUDO)));
       (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.SUDO)));
-    } else {
-      localStorage.clear();
-      this.router.navigate(['login']);
+    }
+    if (!decodedToken.roles.includes(Roles.SUDO)
+      && decodedToken.roles.includes(Roles.ADMIN)) {
+      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ADMIN)));
+      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ADMIN)));
+      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ADMIN)));
+    }
+    if (!decodedToken.roles.includes(Roles.SUDO)
+      && !decodedToken.roles.includes(Roles.ADMIN)
+      && decodedToken.roles.includes(Roles.USER)) {
+      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.USER)));
+      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.USER)));
+      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.USER)));
     }
   }
 

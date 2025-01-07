@@ -53,7 +53,7 @@ export class TecnicoService {
       );
   }
 
-  update(id: string | number, tecnico: Tecnico): Observable<Tecnico> {
+  update(id: string, tecnico: Tecnico): Observable<Tecnico> {
     const headers = this.authHeaderService.getHeaders();
 
     return this.http
@@ -70,7 +70,7 @@ export class TecnicoService {
       );
   }
 
-  findById(id: string | number): Observable<Tecnico> {
+  findById(id: string): Observable<Tecnico> {
     const headers = this.authHeaderService.getHeaders();
     return this.http.get<Tecnico>(`${API_CONFIG.baseURL}/tecnicos/${id}`,
       { headers })
@@ -82,7 +82,33 @@ export class TecnicoService {
       }));
   }
 
-  delete(id: string | number): Observable<Tecnico> {
+  findByEmail(email: string): Observable<TecnicoDto> {
+    const headers = this.authHeaderService.getHeaders();
+
+    return this.http.get<TecnicoDto>(`${API_CONFIG.baseURL}/tecnicos/email/${email}`,
+      { headers })
+      .pipe(catchError((error: HttpErrorResponse): Observable<never> => {
+        if (error.status === 403) {
+          this.authService.handleTokenExpiration();
+
+        } return throwError(() => error.error.message);
+      }));
+  }
+
+  findAllByPerfil(perfil: number): Observable<TecnicoDto[]> {
+    const headers = this.authHeaderService.getHeaders();
+
+    return this.http.get<TecnicoDto[]>(`${API_CONFIG.baseURL}/tecnicos/perfis/${perfil}`,
+      { headers })
+      .pipe(catchError((error: HttpErrorResponse): Observable<never> => {
+        if (error.status === 403) {
+          this.authService.handleTokenExpiration();
+
+        } return throwError(() => error.error.message);
+      }));
+  }
+
+  delete(id: string): Observable<Tecnico> {
     const headers = this.authHeaderService.getHeaders();
     return this.http.delete<Tecnico>(`${API_CONFIG.baseURL}/tecnicos/${id}`,
       { headers })

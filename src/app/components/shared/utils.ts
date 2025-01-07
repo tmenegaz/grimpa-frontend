@@ -33,6 +33,16 @@ export function convertPerfisToNumbers(perfis: string[]): number[] {
   return perfis.map(perfil => Perfil[perfil as keyof typeof Perfil]);
 }
 
+export function convertKeyToPerfil(perfil: string): Perfil {
+  return Perfil[perfil];
+}
+
+export function convertPerfisToKey(perfis: Perfil[]): string {
+  return Perfil[perfis as unknown as keyof typeof Perfil].toString();
+}
+
+export function getFileName(filePath) { return filePath.split('/').pop(); }
+
 export function setPerfisValue(tecnicoForm: FormGroup): void {
   const selectedPerfis: string[] = tecnicoForm.get('perfis').value;
   const perfilValues: number[] = convertPerfisToNumbers(selectedPerfis);
