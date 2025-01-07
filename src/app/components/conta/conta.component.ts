@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +11,7 @@ import { TecnicoDto } from '~components/tecnico/entity/tecnico.dto';
 import { Tecnico } from '~components/tecnico/entity/tecnico.model';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 import { SharedModule } from '~shared/shared.module';
-import { convertPerfisToNumbers, currentDate, getFileName, isAdmin, isUser } from '~shared/utils';
+import { currentDate, getFileName, isAdmin, isUser } from '~shared/utils';
 import { AuthService } from '~src/app/config/login/service/auth.service';
 import { Perfil } from '~src/app/enums/perfil.enum';
 import { FileUploadService } from '~src/app/services/file-upload.service';
@@ -27,7 +27,7 @@ import { FilePathDto } from './entity/file-path.dto';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideNativeDateAdapter()],
 })
-export class ContaComponent implements OnInit, OnChanges {
+export class ContaComponent implements OnInit {
 
   isUser = false
   isAdmin = false;
@@ -53,7 +53,8 @@ export class ContaComponent implements OnInit, OnChanges {
     private clienteService: ClienteService,
     private tecnicoService: TecnicoService,
     private toastr: ToastrService,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -66,12 +67,6 @@ export class ContaComponent implements OnInit, OnChanges {
     this.findByPerfilTecnico();
     this.findByPerfilCliente();
 
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['selectedFile'] && this.selectedFile) {
-      this.onUpload();
-    }
   }
 
   setContaForm(): FormGroup {
@@ -217,6 +212,7 @@ export class ContaComponent implements OnInit, OnChanges {
           const url = window.URL.createObjectURL(blob);
           this.imageUrl = url;
           this.stepSubcribes.set(0);
+          this.cdr.detectChanges();
         },
         error: (err) => {
           this.isLoading = false
@@ -227,10 +223,10 @@ export class ContaComponent implements OnInit, OnChanges {
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
-    this.onUpload();
   }
 
   private onDeleteFile() {
+    if (localStorage.getItem('fileName') === null) return;
     if (this.stepSubcribes() !== 1) return;
     this.isLoading = true;
     this.fileUploadService.deleteFile(localStorage.getItem('fileName'))
@@ -242,8 +238,10 @@ export class ContaComponent implements OnInit, OnChanges {
         next: () => {
           localStorage.removeItem('fileName');
           this.toastr.success("Aquivo deletado", 'Sucesso');
-          this.nextStep();
+          this.imageUrl = null;
+          this.selectedFile = null;
           this.stepSubcribes.set(0);
+          this.cdr.detectChanges();
         },
         error: (err) => {
           this.isLoading = false;
