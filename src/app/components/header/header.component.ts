@@ -5,6 +5,7 @@ import { DrawerService } from '~src/app/services/drawer.service';
 import { LanguageService } from '~src/app/services/language.service';
 import { RouteService } from '~src/app/services/route.service';
 import { Router } from '@angular/router';
+import { ImageService } from '~src/app/services/image.service';
 
 @Component({
   selector: 'app-header',
@@ -23,6 +24,7 @@ export class HeaderComponent implements OnInit {
     private drawerService: DrawerService,
     private languageService: LanguageService,
     private router: Router,
+    private imageService: ImageService,
   ) { }
 
   ngOnInit(): void {
@@ -45,4 +47,8 @@ export class HeaderComponent implements OnInit {
   account(): void {
     this.router.navigate(['/conta']);
   }
+
+  getImageUrl(): string { return this.imageService.getImageUrl(); }
+
+  hasImage(): boolean { return !!this.imageService.getImageUrl(); }
 }

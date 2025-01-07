@@ -17,6 +17,7 @@ import { Perfil } from '~src/app/enums/perfil.enum';
 import { FileUploadService } from '~src/app/services/file-upload.service';
 import { noNumbersValidator } from '~src/app/validators/nome.validator';
 import { FilePathDto } from './entity/file-path.dto';
+import { ImageService } from '~src/app/services/image.service';
 
 @Component({
   selector: 'app-conta',
@@ -55,6 +56,7 @@ export class ContaComponent implements OnInit {
     private toastr: ToastrService,
     private fileUploadService: FileUploadService,
     private cdr: ChangeDetectorRef,
+    private imageService: ImageService,
   ) { }
 
   ngOnInit(): void {
@@ -90,7 +92,7 @@ export class ContaComponent implements OnInit {
         finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: (clienteDto: ClienteDto[]) => {
+        next: ((clienteDto: ClienteDto[]) => {
           const clientes: Cliente[] = clienteDto.map(dto => Cliente.fromDto(dto));
 
           this.cliente = clientes.find(cliente => cliente.email === this.sub);
@@ -102,11 +104,12 @@ export class ContaComponent implements OnInit {
             localStorage.setItem('fileName', getFileName(this.cliente.filePath.path));
           }
 
+        }),
+        error: (error) => {
+          this.isLoading = false;
+          const erroMessage = error.message || 'Erro ao consultar cliente';
+          this.toastr.error(erroMessage, 'Erro');
         },
-        error: (err) => {
-          this.isLoading = false
-          console.error(err);
-        }
       })
   }
 
@@ -118,16 +121,17 @@ export class ContaComponent implements OnInit {
         finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: (tecnicoDto: TecnicoDto[]) => {
+        next: ((tecnicoDto: TecnicoDto[]) => {
           const tecnicos: Tecnico[] = tecnicoDto.map(dto => Tecnico.fromDto(dto));
 
           this.tecnico = tecnicos.find(tecnico => tecnico.email === this.sub);
           this.contaForm.patchValue(this.tecnico);
+        }),
+        error: (error) => {
+          this.isLoading = false;
+          const erroMessage = error.message || 'Erro ao consultar técnico';
+          this.toastr.error(erroMessage, 'Erro');
         },
-        error: (err) => {
-          this.isLoading = false
-          console.error(err);
-        }
       })
   }
 
@@ -141,15 +145,16 @@ export class ContaComponent implements OnInit {
         finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: () => {
+        next: (() => {
           localStorage.setItem('fileName', this.selectedFile.name);
           this.stepSubcribes.set(1);
           this.findByPath(this.selectedFile.name);
+        }),
+        error: (error) => {
+          this.isLoading = false;
+          const erroMessage = error.message || 'Erro ao atualizar a imagem';
+          this.toastr.error(erroMessage, 'Erro');
         },
-        error: (err) => {
-          this.isLoading = false
-          console.error(err);
-        }
       })
   }
 
@@ -162,17 +167,18 @@ export class ContaComponent implements OnInit {
         finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: (filePathDto: FilePathDto) => {
+        next: ((filePathDto: FilePathDto) => {
           this.filePathDto = filePathDto;
           this.stepSubcribes.set(2);
           this.editCliente();
 
 
+        }),
+        error: (error) => {
+          this.isLoading = false;
+          const erroMessage = error.message || 'Erro ao tentar localizar a imagem';
+          this.toastr.error(erroMessage, 'Erro');
         },
-        error: (err) => {
-          this.isLoading = false
-          console.error(err);
-        }
       })
   }
 
@@ -193,7 +199,7 @@ export class ContaComponent implements OnInit {
         }),
         error: (error) => {
           this.isLoading = false;
-          const erroMessage = error.message || 'Erro ao cadastrar técnico';
+          const erroMessage = error.message || 'Erro ao mudificar cliente';
           this.toastr.error(erroMessage, 'Erro');
         },
       });
@@ -208,16 +214,18 @@ export class ContaComponent implements OnInit {
         finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: (blob: Blob) => {
+        next: ((blob: Blob) => {
           const url = window.URL.createObjectURL(blob);
           this.imageUrl = url;
+          this.imageService.setImageUrl(url);
           this.stepSubcribes.set(0);
           this.cdr.detectChanges();
+        }),
+        error: (error) => {
+          this.isLoading = false;
+          const erroMessage = error.message || 'Erro para apresentar a imagem';
+          this.toastr.error(erroMessage, 'Erro');
         },
-        error: (err) => {
-          this.isLoading = false
-          console.error(err);
-        }
       })
   }
 
@@ -235,14 +243,15 @@ export class ContaComponent implements OnInit {
         finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: () => {
+        next: (() => {
           localStorage.removeItem('fileName');
           this.toastr.success("Aquivo deletado", 'Sucesso');
           this.imageUrl = null;
           this.selectedFile = null;
           this.stepSubcribes.set(0);
+          this.imageService.setImageUrl(null);
           this.cdr.detectChanges();
-        },
+        }),
         error: (err) => {
           this.isLoading = false;
           const erroMessage = err.message || 'Erro ao deletera arquivo';
@@ -300,4 +309,8 @@ export class ContaComponent implements OnInit {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  getImageUrl(): string { return this.imageService.getImageUrl(); }
+
+  hasImage(): boolean { return !!this.imageService.getImageUrl(); }
 }

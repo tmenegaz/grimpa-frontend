@@ -6,7 +6,11 @@
         <mat-panel-title> Personal data </mat-panel-title>
         <mat-panel-description>
           Type your name and age
-          <mat-icon>account_circle</mat-icon>
+          <ng-container *ngIf="hasImage(); else defaultIcon">
+            <img [src]="getImageUrl()" alt="User Image" class="user-image">
+          </ng-container> <ng-template #defaultIcon>
+            <mat-icon fontIcon="account_circle"></mat-icon>
+          </ng-template>
         </mat-panel-description>
       </mat-expansion-panel-header>
 
@@ -14,7 +18,7 @@
       <button type="button" (click)="onUpload()">Upload</button>
       <button type="button" (click)="onDelete()">Delete</button>
 
-      <img *ngIf="imageUrl" [src]="imageUrl" width="45px" height="45px" alt="Uploaded Image" />
+      <img class="user-image-account" *ngIf="imageUrl" [src]="imageUrl" alt="Uploaded Image" />
 
 
 
