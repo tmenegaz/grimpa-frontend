@@ -6,12 +6,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 import { Page } from '~interfaces/page.interface';
-import { className, formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
+import { className, convertPerfisToKey, formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
 import { DeleteDialogComponent } from '~src/app/config/dialog/delete-dialog.component';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
@@ -21,6 +21,7 @@ import { PaginationService } from '~src/app/services/pagination.service';
 import { RolesService } from '~src/app/services/roles.service';
 import { TecnicoDto } from '../entity/tecnico.dto';
 import { TecnicoResolver } from '~src/app/app.routes';
+import { Perfil } from '~src/app/enums/perfil.enum';
 
 @Component({
   selector: 'app-tecnico-list',
@@ -69,7 +70,8 @@ export class TecnicoListComponent implements OnInit, OnChanges {
 
     this.languageService
       .language$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false))
       .subscribe({
         next: ((lang) => {
           this.translate.use(lang);
@@ -78,11 +80,13 @@ export class TecnicoListComponent implements OnInit, OnChanges {
       });
 
     this.paginationService.pageIndex$
-      .pipe(takeUntil(this.destroy$)).subscribe(
-        () => this.loadTecnicos());
+      .pipe(takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false)).subscribe(
+          () => this.loadTecnicos());
     this.paginationService.pageSize$
-      .pipe(takeUntil(this.destroy$)).subscribe(
-        () => this.loadTecnicos());
+      .pipe(takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false)).subscribe(
+          () => this.loadTecnicos());
 
     this.updateDisplayedColumns();
   }
@@ -105,20 +109,23 @@ export class TecnicoListComponent implements OnInit, OnChanges {
 
     this.service.findAll(pageIndex, pageSize)
       .pipe(
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false)
       )
       .subscribe({
         next: (tecnicosDto: Page<TecnicoDto>) => {
           const tecnicos = tecnicosDto.content.map(Tecnico.fromDto);
 
           tecnicos.forEach(tecnico => {
-            tecnico.perfis = translateProfiles(tecnico.perfis, this.translate);
+            tecnico.perfis = translateProfiles(
+              convertPerfisToKey(tecnico.perfis),
+              this.translate)
+              .map(key => Perfil[key as keyof typeof Perfil]);
           });
           this.dataSource = new MatTableDataSource<Tecnico>(tecnicos);
           this.dataSource.sort = this.sort;
 
           this.paginationService.setTotalElements(tecnicosDto.totalElements);
-          this.isLoading = false;
         },
         error: (error) => {
           this.isLoading = false;
@@ -152,11 +159,11 @@ export class TecnicoListComponent implements OnInit, OnChanges {
           this.isLoading = true;
           this.service.delete(tecnico.id)
             .pipe(
-              takeUntil(this.destroy$)
+              takeUntil(this.destroy$),
+              finalize(() => this.isLoading = false)
             )
             .subscribe({
               next: (() => {
-                this.isLoading = false;
                 this.toastr.success('Success', 'Cadastro');
                 this.loadTecnicos();
 

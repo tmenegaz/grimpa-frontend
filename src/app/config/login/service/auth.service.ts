@@ -65,23 +65,23 @@ export class AuthService {
     }
 
 
-    if (decodedToken.roles.includes(Roles.SUDO)) {
-      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.SUDO)));
-      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.SUDO)));
-      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.SUDO)));
+    if (decodedToken.roles.includes(Roles.ROLE_SUDO)) {
+      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ROLE_SUDO)));
+      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ROLE_SUDO)));
+      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ROLE_SUDO)));
     }
-    if (!decodedToken.roles.includes(Roles.SUDO)
-      && decodedToken.roles.includes(Roles.ADMIN)) {
-      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ADMIN)));
-      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ADMIN)));
-      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ADMIN)));
+    if (!decodedToken.roles.includes(Roles.ROLE_SUDO)
+      && decodedToken.roles.includes(Roles.ROLE_ADMIN)) {
+      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ROLE_ADMIN)));
+      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ROLE_ADMIN)));
+      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ROLE_ADMIN)));
     }
-    if (!decodedToken.roles.includes(Roles.SUDO)
-      && !decodedToken.roles.includes(Roles.ADMIN)
-      && decodedToken.roles.includes(Roles.USER)) {
-      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.USER)));
-      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.USER)));
-      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.USER)));
+    if (!decodedToken.roles.includes(Roles.ROLE_SUDO)
+      && !decodedToken.roles.includes(Roles.ROLE_ADMIN)
+      && decodedToken.roles.includes(Roles.ROLE_USER)) {
+      (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ROLE_USER)));
+      (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ROLE_USER)));
+      (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ROLE_USER)));
     }
   }
 
@@ -91,13 +91,13 @@ export class AuthService {
       return roles.reduce((acc: Roles[], role: string) => {
         switch (role) {
           case 'ROLE_ADMIN':
-            acc.push(Roles.ADMIN);
+            acc.push((Roles.ROLE_ADMIN));
             break;
           case 'ROLE_USER':
-            acc.push(Roles.USER);
+            acc.push(Roles.ROLE_USER);
             break;
           case 'ROLE_SUDO':
-            acc.push(Roles.SUDO);
+            acc.push(Roles.ROLE_SUDO);
             break;
         }
         return acc;

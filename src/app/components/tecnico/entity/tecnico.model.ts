@@ -1,3 +1,5 @@
+import { Perfil } from "~src/app/enums/perfil.enum";
+import { Roles } from "~src/app/enums/roles.enum";
 import { TecnicoDto } from "./tecnico.dto";
 
 export class Tecnico {
@@ -6,7 +8,9 @@ export class Tecnico {
   cpf: string;
   email: string;
   senha: string;
-  perfis: string[];
+  roles: Roles;
+  filePath: { id: string, path: string };
+  perfis: Perfil[];
   dataCriacao: Date | string;
 
   constructor(
@@ -14,7 +18,9 @@ export class Tecnico {
     cpf: string,
     email: string,
     senha: string,
-    perfis: string[],
+    roles: Roles,
+    filePath: { id: string, path: string },
+    perfis: Perfil[],
     dataCriacao: Date | string,
     id?: string,
   ) {
@@ -22,6 +28,8 @@ export class Tecnico {
     this.nome = nome;
     this.cpf = cpf;
     this.email = email;
+    this.roles = roles;
+    this.filePath = filePath;
     this.senha = senha;
     this.perfis = perfis;
     this.dataCriacao = dataCriacao;
@@ -33,6 +41,8 @@ export class Tecnico {
       dto.cpf,
       dto.email,
       dto.senha,
+      dto.roles,
+      dto.filePath,
       dto.perfis,
       dto.dataCriacao,
       dto.id,
@@ -45,6 +55,8 @@ export class Tecnico {
       nome: this.nome,
       cpf: this.cpf,
       email: this.email,
+      roles: this.roles,
+      filePath: this.filePath,
       senha: this.senha,
       perfis: this.perfis,
       dataCriacao: this.dataCriacao

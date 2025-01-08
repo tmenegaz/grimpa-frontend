@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { ClienteService } from '~components/cliente/service/cliente.service';
 import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
@@ -70,7 +70,8 @@ export class ClienteListComponent implements OnInit, OnChanges {
 
     this.languageService
       .language$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false))
       .subscribe({
         next: ((lang) => {
           this.translate.use(lang);
@@ -79,11 +80,13 @@ export class ClienteListComponent implements OnInit, OnChanges {
       });
 
     this.paginationService.pageIndex$
-      .pipe(takeUntil(this.destroy$)).subscribe(
-        () => this.loadClientes());
+      .pipe(takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false)).subscribe(
+          () => this.loadClientes());
     this.paginationService.pageSize$
-      .pipe(takeUntil(this.destroy$)).subscribe(
-        () => this.loadClientes());
+      .pipe(takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false)).subscribe(
+          () => this.loadClientes());
 
     this.updateDisplayedColumns();
   }
@@ -106,7 +109,8 @@ export class ClienteListComponent implements OnInit, OnChanges {
 
     this.service.findAll(pageIndex, pageSize)
       .pipe(
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false)
       )
       .subscribe({
         next: (clientesDto: Page<ClienteDto>) => {
@@ -122,7 +126,6 @@ export class ClienteListComponent implements OnInit, OnChanges {
           this.dataSource.sort = this.sort;
 
           this.paginationService.setTotalElements(clientesDto.totalElements);
-          this.isLoading = false;
         },
         error: (error) => {
           this.isLoading = false;
@@ -156,11 +159,11 @@ export class ClienteListComponent implements OnInit, OnChanges {
           this.isLoading = true;
           this.service.delete(cliente.id)
             .pipe(
-              takeUntil(this.destroy$)
+              takeUntil(this.destroy$),
+              finalize(() => this.isLoading = false)
             )
             .subscribe({
               next: (() => {
-                this.isLoading = false;
                 this.toastr.success('Success', 'Cadastro');
                 this.loadClientes();
 

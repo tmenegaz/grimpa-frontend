@@ -1,8 +1,9 @@
 import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Cliente } from '~components/cliente/entity/cliente.model';
-import { className } from '~components/shared/utils';
+import { className, getRolesKey } from '~components/shared/utils';
 import { Tecnico } from '~components/tecnico/entity/tecnico.model';
+import { Roles } from '../enums/roles.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -26,11 +27,11 @@ export class RolesService implements OnInit {
     this.roles$[entity] = this.rolesSubjects[entity].asObservable();
   }
 
-  setRoles(entity: string, roles: string[]): void {
+  setRoles(entity: string, roles: Roles[]): void {
     if (!this.rolesSubjects[entity]) {
       this.initializeRoles(entity);
     }
-    this.rolesSubjects[entity].next(roles);
+    this.rolesSubjects[entity].next(roles.map(role => getRolesKey(role)));
     localStorage.setItem(`role-toggle-${entity}`, JSON.stringify(roles));
   }
 

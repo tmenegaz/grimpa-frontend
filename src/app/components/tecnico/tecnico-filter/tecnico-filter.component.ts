@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '
 import { Router } from '@angular/router';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoListComponent } from '~components/tecnico/tecnico-list/tecnico-list.component';
-import { className, isAdmin } from '~shared/utils';
+import { className, getRolesKey, isAdmin } from '~shared/utils';
 import { AuthService } from '~src/app/config/login/service/auth.service';
 import { Roles } from '~src/app/enums/roles.enum';
 import { DrawerService } from '~src/app/services/drawer.service';
@@ -64,11 +64,11 @@ export class TecnicoFilterComponent implements OnInit {
 
   onEditMode(event: any): void {
     const name = event.source.name;
-    const roles = event.value.includes(Roles.ADMIN)
-      ? [Roles.ADMIN]
-      : [Roles.USER];
+    const roles = event.value.includes(Roles.ROLE_ADMIN)
+      ? [Roles.ROLE_ADMIN]
+      : [Roles.ROLE_USER];
 
-    this.editStatusChanged = roles;
+    this.editStatusChanged = roles.map(role => getRolesKey(role));
     this.rolesService.setRoles(name, roles);
   }
 

@@ -1,5 +1,5 @@
 export enum Roles {
-  ADMIN = 'ROLE_ADMIN',
-  USER = 'ROLE_USER',
-  SUDO = 'ROLE_SUDO'
+  ROLE_ADMIN = 0,
+  ROLE_USER = 1,
+  ROLE_SUDO = 2
 }

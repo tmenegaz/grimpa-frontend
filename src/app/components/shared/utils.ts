@@ -15,26 +15,29 @@ export const currentDate = new Date()
 
 export function isAdmin(authService: AuthService): boolean {
   const roles = authService.getCurrentUserRoles();
-  return roles ? roles.includes(Roles.ADMIN) : false;
+  return roles ? roles.includes(Roles.ROLE_ADMIN) : false;
 }
 
 export function isUser(authService: AuthService): boolean {
   const roles = authService.getCurrentUserRoles();
-  return roles ? roles.includes(Roles.USER) : false;
+  return roles ? roles.includes(Roles.ROLE_USER) : false;
 }
 
 export function isRoleAdmin(rolesService: RolesService, entity: string): boolean {
   const roles = rolesService.getCurrentRoles(entity);
-
-  return roles.includes(Roles.ADMIN);
+  return roles.includes(getRolesKey(Roles.ROLE_ADMIN));
 }
 
 export function convertPerfisToNumbers(perfis: string[]): number[] {
   return perfis.map(perfil => Perfil[perfil as keyof typeof Perfil]);
 }
 
-export function convertKeyToPerfil(perfil: string): Perfil {
+export function getPerfisKey(perfil: string): Perfil {
   return Perfil[perfil];
+}
+
+export function getRolesKey(value: Roles): string {
+  return Roles[value];
 }
 
 export function convertPerfisToKey(perfis: Perfil[]): string {

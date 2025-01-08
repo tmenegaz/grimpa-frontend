@@ -79,9 +79,14 @@ export class ContaComponent implements OnInit {
       email: new FormControl(null, [Validators.required, Validators.email]),
       filePath: new FormControl(null, []),
       senha: new FormControl(null, [Validators.required, Validators.minLength(3)]),
-      perfis: new FormControl([]),
+      perfis: new FormControl(null, []),
+      roles: new FormControl(null, []),
       dataCriacao: new FormControl(currentDate),
     });
+
+    this.contaForm.get('id').disable();
+    this.contaForm.get('filePath').disable();
+    this.contaForm.get('roles').disable();
   }
 
   findByPerfilCliente() {
