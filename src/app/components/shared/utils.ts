@@ -41,7 +41,12 @@ export function getRolesKey(value: Roles): string {
 }
 
 export function convertPerfisToKey(perfis: Perfil[]): string {
-  return Perfil[perfis as unknown as keyof typeof Perfil].toString();
+  if (perfis) {
+    return perfis.toString();
+  }
+  else {
+    return Perfil[perfis as unknown as keyof typeof Perfil].toString();
+  }
 }
 
 export function getFileName(filePath) { return filePath.split('/').pop(); }
@@ -72,7 +77,7 @@ export function isArray(value: any): boolean {
   return Array.isArray(value);
 }
 
-export function translateProfiles(profiles: any, translate: TranslateService): string[] {
+export function translateProfiles(profiles: Perfil, translate: TranslateService): string[] {
   if (isString(profiles)) {
     return profiles.split(',').map(profile => translate.instant(profile.trim()));
   } else if (isArray(profiles)) {

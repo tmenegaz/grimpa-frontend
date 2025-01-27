@@ -31,8 +31,11 @@ export class RolesService implements OnInit {
     if (!this.rolesSubjects[entity]) {
       this.initializeRoles(entity);
     }
-    this.rolesSubjects[entity].next(roles.map(role => getRolesKey(role)));
-    localStorage.setItem(`role-toggle-${entity}`, JSON.stringify(roles));
+    var roleKey = getRolesKey(roles[0]);
+    this.rolesSubjects[entity].next([roleKey]);
+    console.log(this.rolesSubjects);
+
+    localStorage.setItem(`role-toggle-${entity}`, JSON.stringify(roleKey));
   }
 
   getCurrentRoles(entity: string): string[] {

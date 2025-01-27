@@ -116,6 +116,7 @@ export class LoginComponent implements OnInit {
 
   onCancel(): void {
     this.loginForm.reset(null, { emitEvent: false });
+    this.router.navigate(["login"]);
   }
 
   ngOnDestroy(): void {

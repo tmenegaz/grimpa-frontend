@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -11,17 +12,18 @@ import { TecnicoDto } from '~components/tecnico/entity/tecnico.dto';
 import { Tecnico } from '~components/tecnico/entity/tecnico.model';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 import { SharedModule } from '~shared/shared.module';
-import { currentDate, getFileName, isAdmin, isUser } from '~shared/utils';
+import { currentDate, getFileName, isAdmin, isUser, setPerfisValue } from '~shared/utils';
 import { AuthService } from '~src/app/config/login/service/auth.service';
+import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
 import { Perfil } from '~src/app/enums/perfil.enum';
 import { FileUploadService } from '~src/app/services/file-upload.service';
+import { ImageService } from '~src/app/services/image.service';
 import { noNumbersValidator } from '~src/app/validators/nome.validator';
 import { FilePathDto } from './entity/file-path.dto';
-import { ImageService } from '~src/app/services/image.service';
 
 @Component({
   selector: 'app-conta',
-  imports: [SharedModule],
+  imports: [SharedModule, MatGridListModule, PasswordMaskPipe],
   templateUrl: './conta.component.html',
   styleUrl: './conta.component.css',
   standalone: true,
@@ -39,13 +41,18 @@ export class ContaComponent implements OnInit {
 
   selectedFile: File;
   contaForm: FormGroup;
-
+  hide = true;
+  isEdit = false;
   tecnico: Tecnico;
   cliente: Cliente;
   filePathDto: FilePathDto;
 
   step = signal(0);
   stepSubcribes = signal(0);
+
+  perfis = Object.keys(Perfil)
+    .filter(key => !isNaN(Number(key)))
+    .map(key => Perfil[key as keyof typeof Perfil]);
 
   private destroy$ = new Subject<void>();
 
@@ -69,6 +76,12 @@ export class ContaComponent implements OnInit {
     this.findByPerfilTecnico();
     this.findByPerfilCliente();
 
+    this.contaForm.get('id').disable();
+    this.contaForm.get('filePath').disable();
+    this.contaForm.get('roles').disable();
+    this.contaForm.get('email').disable();
+    this.contaForm.get('cpf').disable();
+
   }
 
   setContaForm(): FormGroup {
@@ -83,10 +96,6 @@ export class ContaComponent implements OnInit {
       roles: new FormControl(null, []),
       dataCriacao: new FormControl(currentDate),
     });
-
-    this.contaForm.get('id').disable();
-    this.contaForm.get('filePath').disable();
-    this.contaForm.get('roles').disable();
   }
 
   findByPerfilCliente() {
@@ -104,10 +113,11 @@ export class ContaComponent implements OnInit {
           this.contaForm.patchValue(this.cliente);
 
           this.stepSubcribes.set(3);
-          if (this.cliente.filePath) {
+          if (this.cliente?.filePath) {
             this.fetchImageUrl(getFileName(this.cliente.filePath.path));
             localStorage.setItem('fileName', getFileName(this.cliente.filePath.path));
           }
+          this.isEdit = true;
 
         }),
         error: (error) => {
@@ -131,6 +141,7 @@ export class ContaComponent implements OnInit {
 
           this.tecnico = tecnicos.find(tecnico => tecnico.email === this.sub);
           this.contaForm.patchValue(this.tecnico);
+          this.isEdit = true;
         }),
         error: (error) => {
           this.isLoading = false;
@@ -318,4 +329,108 @@ export class ContaComponent implements OnInit {
   getImageUrl(): string { return this.imageService.getImageUrl(); }
 
   hasImage(): boolean { return !!this.imageService.getImageUrl(); }
+
+  validateControl(controlName: string, requiredMessage: string, invalidMessage: string): boolean {
+    const control = this.contaForm.get(controlName);
+
+    if (!control.value || (control.touched && control.invalid)) {
+      const errorMessage = control.hasError('required')
+        ? requiredMessage
+        : invalidMessage;
+
+      control.reset(null, { emitEvent: false });
+      this.toastr.error(errorMessage);
+      return true;
+    }
+    return false;
+  }
+
+  get hasNomeErrors(): boolean {
+    return this.validateControl('nome', 'Nome obrigatório', 'Nome inválido');
+  }
+
+  get hasSenhaErrors(): boolean {
+    return this.validateControl('senha', 'Senha é obrigatória', ' Senha deve ter no mínimo 3 caracteres');
+  }
+
+  onSubmit(): void {
+    this.isLoading = true;
+
+    setPerfisValue(this.contaForm);
+
+    if (
+      !this.hasNomeErrors
+      && !this.hasSenhaErrors
+    ) {
+      this.cliente = { ... this.contaForm.value };
+
+      this.clienteService.create(this.cliente)
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe({
+          next: (() => {
+            this.isLoading = false;
+            this.toastr.success('Success', 'Cadastro');
+            this.contaForm.reset(null, {
+              emitEvent: false,
+            });
+          }),
+          error: (error) => {
+            this.isLoading = false;
+            const erroMessage = error || 'Erro ao cadastrar técnico';
+            this.toastr.error(erroMessage, 'Erro');
+
+          },
+        });
+    }
+  }
+
+  onEdit(): void {
+    this.isLoading = true;
+
+    setPerfisValue(this.contaForm);
+
+    if (
+      !this.hasNomeErrors
+      && !this.hasSenhaErrors
+    ) {
+      this.cliente = { ... this.contaForm.value };
+      const clienteDto = this.cliente.toDto();
+
+      this.clienteService.update(clienteDto.id, clienteDto)
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe({
+          next: (() => {
+            this.isLoading = false;
+            this.toastr.success('Success', 'Cadastro');
+            this.contaForm.reset(null, {
+              emitEvent: false,
+            });
+          }),
+          error: (error) => {
+            this.isLoading = false;
+            const erroMessage = error || 'Erro ao atualizar técnico';
+            this.toastr.error(erroMessage, 'Erro');
+          },
+        });
+
+    }
+  }
+
+  onCancel(): void {
+    this.contaForm.reset(null, { emitEvent: false });
+  }
+
+  onHide(): void {
+    this.hide = !this.hide;
+  }
 }
