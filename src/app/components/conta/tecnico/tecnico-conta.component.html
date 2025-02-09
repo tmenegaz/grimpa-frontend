@@ -1,0 +1,122 @@
+<mat-accordion class="form-container custom-box-shadow">
+  <mat-expansion-panel [expanded]="step() === 1" (opened)="setStep(1)" hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Personal data </mat-panel-title>
+      <mat-panel-description>
+        Type your name and age
+        <ng-container *ngIf="hasImage(); else defaultIcon">
+          <img [src]="getImageUrl()" alt="User Image" class="user-image">
+        </ng-container> <ng-template #defaultIcon>
+          <mat-icon fontIcon="account_circle"></mat-icon>
+        </ng-template>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-grid-list cols="2" rowHeight="2:1">
+      <mat-grid-tile>
+        <div class="image-action">
+          <img class="user-image-account" *ngIf="imageUrl" [src]="imageUrl" alt="Uploaded Image" />
+          <input title="slectImage" type="file" (change)="onFileSelected($event)" />
+          <button type="button" (click)="onUpload()">Upload</button>
+          <button type="button" (click)="onDelete()">Delete</button>
+        </div>
+
+
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <form [formGroup]="contaForm" (ngSubmit)="isEdit ? onEdit() : onSubmit()" class="form">
+          <h2>{{ 'titulo_cadastro_tecnico' | translate }}</h2>
+
+          <mat-form-field class="full-width">
+            <mat-label>{{ 'tecnico_nome' | translate }}</mat-label>
+            <input formControlName="nome" matInput placeholder="{{ 'placeholder_nome_tecnico' | translate }}"
+              type="text">
+            <mat-icon matSuffix fontIcon="person_apron"></mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>{{ 'tecnico_cpf' | translate }}</mat-label>
+            <input formControlName="cpf" matInput placeholder="xxx.xxx.xxx-xx" type="text" mask="000.000.000-00">
+            <mat-icon matSuffix fontIcon="fingerprint"></mat-icon>
+          </mat-form-field>
+
+          <ng-container *ngIf="isAdmin">
+            <mat-form-field class="full-width">
+              <mat-label>{{ 'tecnico_perfil' | translate }}</mat-label>
+              <mat-select formControlName="perfis" multiple><mat-option *ngFor="let perfil of perfis"
+                  [value]="perfil">{{ perfil }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </ng-container>
+
+          <mat-form-field class="full-width">
+            <mat-label>{{ 'tecnico_email' | translate }}</mat-label>
+            <input formControlName="email" matInput placeholder="Ex. email@provedor.com" type="email">
+            <mat-icon matSuffix fontIcon="mail"></mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>{{ 'tecnico_senha' | translate }}</mat-label>
+            <input matInput formControlName="senha" placeholder="Ex. 123abcABC!&_" [type]="hide ? 'password' : 'text'"
+              [value]="isEdit ? (contaForm.get('senha').value | passwordMask)  : ''">
+            <button type="button" mat-icon-button matSuffix (click)="onHide()" [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="hide">
+              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <div class="container-submit">
+            <button type="submit" [disabled]="contaForm.invalid" class="primary custom-box-shadow"
+              mat-stroked-button>{{isEdit ? ('tecnico_edita' | translate) : ('tecnico_cria' | translate) }}</button>
+            <a (click)="onCancel()" class="custom-box-shadow" mat-stroked-button
+              routerLink="home">{{ 'tecnico_cancela' | translate }}</a>
+          </div>
+        </form>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <mat-action-row>
+      <button mat-button (click)="nextStep()">Next</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel [expanded]="step() === 2" (opened)="setStep(2)" hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Destination </mat-panel-title>
+      <mat-panel-description>
+        Type the country name
+        <mat-icon>map</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-form-field>
+      <mat-label>Country</mat-label>
+      <input matInput />
+    </mat-form-field>
+
+    <mat-action-row>
+      <button mat-button (click)="prevStep()">Previous</button>
+      <button mat-button (click)="nextStep()">Next</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel [expanded]="step() === 3" (opened)="setStep(3)" hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Day of the trip </mat-panel-title>
+      <mat-panel-description>
+        Inform the date you wish to travel
+        <mat-icon>date_range</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-form-field>
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly />
+    </mat-form-field>
+    <mat-datepicker #picker></mat-datepicker>
+
+    <mat-action-row>
+      <button mat-button (click)="prevStep()">Previous</button>
+      <button mat-button (click)="nextStep()">End</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>

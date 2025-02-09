@@ -5,9 +5,6 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { ClienteDto } from '~components/cliente/entity/cliente.dto';
-import { Cliente } from '~components/cliente/entity/cliente.model';
-import { ClienteService } from '~components/cliente/service/cliente.service';
 import { TecnicoDto } from '~components/tecnico/entity/tecnico.dto';
 import { Tecnico } from '~components/tecnico/entity/tecnico.model';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
@@ -19,18 +16,18 @@ import { Perfil } from '~src/app/enums/perfil.enum';
 import { FileUploadService } from '~src/app/services/file-upload.service';
 import { ImageService } from '~src/app/services/image.service';
 import { noNumbersValidator } from '~src/app/validators/nome.validator';
-import { FilePathDto } from './entity/file-path.dto';
+import { FilePathDto } from '../entity/file-path.dto';
 
 @Component({
   selector: 'app-conta',
   imports: [SharedModule, MatGridListModule, PasswordMaskPipe],
-  templateUrl: './conta.component.html',
-  styleUrl: './conta.component.css',
+  templateUrl: './tecnico-conta.component.html',
+  styleUrl: './tecnico-conta.component.css',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideNativeDateAdapter()],
 })
-export class ContaComponent implements OnInit {
+export class TecnicoContaComponent implements OnInit {
 
   isUser = false
   isAdmin = false;
@@ -44,7 +41,6 @@ export class ContaComponent implements OnInit {
   hide = true;
   isEdit = false;
   tecnico: Tecnico;
-  cliente: Cliente;
   filePathDto: FilePathDto;
 
   step = signal(0);
@@ -58,7 +54,6 @@ export class ContaComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private clienteService: ClienteService,
     private tecnicoService: TecnicoService,
     private toastr: ToastrService,
     private fileUploadService: FileUploadService,
@@ -74,7 +69,6 @@ export class ContaComponent implements OnInit {
     this.sub = this.authService.getSub();
 
     this.findByPerfilTecnico();
-    this.findByPerfilCliente();
 
     this.contaForm.get('id').disable();
     this.contaForm.get('filePath').disable();
@@ -98,36 +92,6 @@ export class ContaComponent implements OnInit {
     });
   }
 
-  findByPerfilCliente() {
-    this.isLoading = true;
-    this.clienteService.findAllByPerfil(Perfil.CLIENTE)
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => this.isLoading = false)
-      )
-      .subscribe({
-        next: ((clienteDto: ClienteDto[]) => {
-          const clientes: Cliente[] = clienteDto.map(dto => Cliente.fromDto(dto));
-
-          this.cliente = clientes.find(cliente => cliente.email === this.sub);
-          this.contaForm.patchValue(this.cliente);
-
-          this.stepSubcribes.set(3);
-          if (this.cliente?.filePath) {
-            this.fetchImageUrl(getFileName(this.cliente.filePath.path));
-            localStorage.setItem('fileName', getFileName(this.cliente.filePath.path));
-          }
-          this.isEdit = true;
-
-        }),
-        error: (error) => {
-          this.isLoading = false;
-          const erroMessage = error.message || 'Erro ao consultar cliente';
-          this.toastr.error(erroMessage, 'Erro');
-        },
-      })
-  }
-
   findByPerfilTecnico() {
     this.isLoading = true;
     this.tecnicoService.findAllByPerfil(Perfil.TECNICO)
@@ -141,11 +105,18 @@ export class ContaComponent implements OnInit {
 
           this.tecnico = tecnicos.find(tecnico => tecnico.email === this.sub);
           this.contaForm.patchValue(this.tecnico);
+
+          this.stepSubcribes.set(3);
+          if (this.tecnico?.filePath) {
+            this.fetchImageUrl(getFileName(this.tecnico.filePath.path));
+            localStorage.setItem('fileName', getFileName(this.tecnico.filePath.path));
+          }
           this.isEdit = true;
+
         }),
         error: (error) => {
           this.isLoading = false;
-          const erroMessage = error.message || 'Erro ao consultar técnico';
+          const erroMessage = error.message || 'Erro ao consultar tecnico';
           this.toastr.error(erroMessage, 'Erro');
         },
       })
@@ -186,7 +157,7 @@ export class ContaComponent implements OnInit {
         next: ((filePathDto: FilePathDto) => {
           this.filePathDto = filePathDto;
           this.stepSubcribes.set(2);
-          this.editCliente();
+          this.editTecnico();
 
 
         }),
@@ -198,9 +169,9 @@ export class ContaComponent implements OnInit {
       })
   }
 
-  editCliente(): void {
+  editTecnico(): void {
     if (this.stepSubcribes() !== 2) return;
-    this.clienteService.updateFilePath(this.cliente.id, this.filePathDto)
+    this.tecnicoService.updateFilePath(this.tecnico?.id, this.filePathDto)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
@@ -208,14 +179,14 @@ export class ContaComponent implements OnInit {
         })
       )
       .subscribe({
-        next: ((clienteDto: ClienteDto) => {
-          this.contaForm.patchValue(clienteDto);
+        next: ((tecnicoDto: TecnicoDto) => {
+          this.contaForm.patchValue(tecnicoDto);
           this.stepSubcribes.set(3);
           this.fetchImageUrl(localStorage.getItem('fileName'));
         }),
         error: (error) => {
           this.isLoading = false;
-          const erroMessage = error.message || 'Erro ao mudificar cliente';
+          const erroMessage = error.message || 'Erro ao mudificar tecnico';
           this.toastr.error(erroMessage, 'Erro');
         },
       });
@@ -279,14 +250,14 @@ export class ContaComponent implements OnInit {
   onDelete(): void {
     this.isLoading = true;
 
-    const clienteDto = this.cliente.toDto();
-    clienteDto.filePath = null;
+    const tecnicoDto = this.tecnico.toDto();
+    tecnicoDto.filePath = null;
     this.filePathDto = {
       id: null,
       path: null
     };
 
-    this.clienteService.updateFilePath(clienteDto.id, this.filePathDto)
+    this.tecnicoService.updateFilePath(tecnicoDto.id, this.filePathDto)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
@@ -294,9 +265,9 @@ export class ContaComponent implements OnInit {
         })
       )
       .subscribe({
-        next: ((clienteDto: ClienteDto) => {
-          this.cliente = Cliente.fromDto(clienteDto);
-          this.contaForm.patchValue(clienteDto);
+        next: ((tecnicoDto: TecnicoDto) => {
+          this.tecnico = Tecnico.fromDto(tecnicoDto);
+          this.contaForm.patchValue(tecnicoDto);
           this.stepSubcribes.set(1);
           this.onDeleteFile();
         }),
@@ -362,9 +333,9 @@ export class ContaComponent implements OnInit {
       !this.hasNomeErrors
       && !this.hasSenhaErrors
     ) {
-      this.cliente = { ... this.contaForm.value };
+      this.tecnico = { ... this.contaForm.value };
 
-      this.clienteService.create(this.cliente)
+      this.tecnicoService.create(this.tecnico)
         .pipe(
           takeUntil(this.destroy$),
           finalize(() => {
@@ -398,10 +369,10 @@ export class ContaComponent implements OnInit {
       !this.hasNomeErrors
       && !this.hasSenhaErrors
     ) {
-      this.cliente = { ... this.contaForm.value };
-      const clienteDto = this.cliente.toDto();
+      this.tecnico = { ... this.contaForm.value };
+      const tecnicoDto = this.tecnico.toDto();
 
-      this.clienteService.update(clienteDto.id, clienteDto)
+      this.tecnicoService.update(tecnicoDto.id, tecnicoDto)
         .pipe(
           takeUntil(this.destroy$),
           finalize(() => {

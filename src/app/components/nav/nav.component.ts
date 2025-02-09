@@ -38,9 +38,6 @@ export class NavComponent implements OnInit, AfterViewInit {
     this.drawerService.setDrawer(this.drawer)
   }
 
-
-
-
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('roles');

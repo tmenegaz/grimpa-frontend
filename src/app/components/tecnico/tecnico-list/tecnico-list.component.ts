@@ -11,7 +11,8 @@ import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { TecnicoService } from '~components/tecnico/service/tecnico.service';
 import { Page } from '~interfaces/page.interface';
-import { className, convertPerfisToKey, formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
+import { className, formatProfiles, isRoleAdmin } from '~shared/utils';
+import { TecnicoResolver } from '~src/app/app.routes';
 import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
 import { DeleteDialogComponent } from '~src/app/config/dialog/delete-dialog.component';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
@@ -20,8 +21,6 @@ import { LanguageService } from '~src/app/services/language.service';
 import { PaginationService } from '~src/app/services/pagination.service';
 import { RolesService } from '~src/app/services/roles.service';
 import { TecnicoDto } from '../entity/tecnico.dto';
-import { TecnicoResolver } from '~src/app/app.routes';
-import { Perfil } from '~src/app/enums/perfil.enum';
 
 @Component({
   selector: 'app-tecnico-list',
@@ -114,14 +113,8 @@ export class TecnicoListComponent implements OnInit, OnChanges {
       )
       .subscribe({
         next: (tecnicosDto: Page<TecnicoDto>) => {
-          const tecnicos = tecnicosDto.content.map(Tecnico.fromDto);
+          const tecnicos = tecnicosDto.content.map(dto => Tecnico.fromDto(dto, this.translate));
 
-          tecnicos.forEach(tecnico => {
-            tecnico.perfis = translateProfiles(
-              convertPerfisToKey(tecnico.perfis),
-              this.translate)
-              .map(key => Perfil[key as keyof typeof Perfil]);
-          });
           this.dataSource = new MatTableDataSource<Tecnico>(tecnicos);
           this.dataSource.sort = this.sort;
 

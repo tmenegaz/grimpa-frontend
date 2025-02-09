@@ -1,6 +1,8 @@
 import { Perfil } from "~src/app/enums/perfil.enum";
 import { Roles } from "~src/app/enums/roles.enum";
 import { TecnicoDto } from "./tecnico.dto";
+import { TranslateService } from "@ngx-translate/core";
+import { translateProfilesTecnico } from "~app/components/shared/utils";
 
 export class Tecnico {
   id?: string;
@@ -12,6 +14,7 @@ export class Tecnico {
   filePath: { id: string, path: string };
   perfis: Perfil[];
   dataCriacao: Date | string;
+  perfisTraduzidos: string[];
 
   constructor(
     nome: string,
@@ -22,6 +25,7 @@ export class Tecnico {
     filePath: { id: string, path: string },
     perfis: Perfil[],
     dataCriacao: Date | string,
+    translate: TranslateService,
     id?: string,
   ) {
     this.id = id;
@@ -33,9 +37,10 @@ export class Tecnico {
     this.senha = senha;
     this.perfis = perfis;
     this.dataCriacao = dataCriacao;
+    this.perfisTraduzidos = translateProfilesTecnico(perfis, translate);
   }
 
-  static fromDto(dto: TecnicoDto): Tecnico {
+  static fromDto(dto: TecnicoDto, translate?: TranslateService): Tecnico {
     return new Tecnico(
       dto.nome,
       dto.cpf,
@@ -45,6 +50,7 @@ export class Tecnico {
       dto.filePath,
       dto.perfis,
       dto.dataCriacao,
+      translate,
       dto.id,
     );
   }
@@ -59,6 +65,7 @@ export class Tecnico {
       filePath: this.filePath,
       senha: this.senha,
       perfis: this.perfis,
+      perfisTraduzidos: this.perfisTraduzidos,
       dataCriacao: this.dataCriacao
     };
   }

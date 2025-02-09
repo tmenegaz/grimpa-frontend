@@ -11,4 +11,5 @@ export interface ClienteDto {
   roles: Roles;
   perfis: Perfil[];
   dataCriacao: Date | string;
+  perfisTraduzidos: string[];
 }

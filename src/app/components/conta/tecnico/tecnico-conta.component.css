@@ -1,0 +1,33 @@
+.user-image {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.image-action {
+  display: grid;
+}
+
+.user-image-account {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+.form-container {
+  position: absolute;
+  width: 90%;
+  margin: 8rem auto auto 8rem;
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(211, 211, 210);
+  border-radius: 1rem;
+}
+
+.form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+  padding: 4rem 0;
+}

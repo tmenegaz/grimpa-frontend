@@ -17,7 +17,8 @@
       aria-label="icon-button with heart icon">
       <ng-container *ngIf="hasImage(); else defaultIcon">
         <img [src]="getImageUrl()" alt="User Image" class="user-image">
-      </ng-container> <ng-template #defaultIcon>
+      </ng-container>
+      <ng-template #defaultIcon>
         <mat-icon fontIcon="account_circle"></mat-icon>
       </ng-template>
     </button>

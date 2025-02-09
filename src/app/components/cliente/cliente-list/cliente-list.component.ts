@@ -6,12 +6,13 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import { finalize, Subject, takeUntil } from 'rxjs';
+import { filter, finalize, Subject, takeUntil } from 'rxjs';
 import { ClienteService } from '~components/cliente/service/cliente.service';
 import { TabFooterComponent } from '~components/footers/tab-footer.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { Page } from '~interfaces/page.interface';
-import { className, convertPerfisToKey, formatProfiles, isRoleAdmin, translateProfiles } from '~shared/utils';
+import { className, formatProfiles, isRoleAdmin, translateProfilesCliente } from '~shared/utils';
+import { ClienteResolver } from '~src/app/app.routes';
 import { Cliente } from '~src/app/components/cliente/entity/cliente.model';
 import { DeleteDialogComponent } from '~src/app/config/dialog/delete-dialog.component';
 import { PasswordMaskPipe } from '~src/app/config/pipes/password-mask.pipe';
@@ -20,7 +21,6 @@ import { LanguageService } from '~src/app/services/language.service';
 import { PaginationService } from '~src/app/services/pagination.service';
 import { RolesService } from '~src/app/services/roles.service';
 import { ClienteDto } from '../entity/cliente.dto';
-import { ClienteResolver } from '~src/app/app.routes';
 import { Perfil } from '~src/app/enums/perfil.enum';
 
 @Component({
@@ -114,14 +114,8 @@ export class ClienteListComponent implements OnInit, OnChanges {
       )
       .subscribe({
         next: (clientesDto: Page<ClienteDto>) => {
-          const clientes = clientesDto.content.map(Cliente.fromDto);
+          const clientes = clientesDto.content.map(dto => Cliente.fromDto(dto, this.translate));
 
-          clientes.forEach(cliente => {
-            cliente.perfis = translateProfiles(
-              convertPerfisToKey(cliente.perfis),
-              this.translate)
-              .map(key => Perfil[key as keyof typeof Perfil]);
-          });
           this.dataSource = new MatTableDataSource<Cliente>(clientes);
           this.dataSource.sort = this.sort;
 
@@ -180,7 +174,6 @@ export class ClienteListComponent implements OnInit, OnChanges {
   }
 
   updateDisplayedColumns(): void {
-
     this.isEditMode = isRoleAdmin(this.rolesService, className(Cliente.name));
     this.displayedColumns = this.isEditMode
       ? ['nome', 'cpf', 'email', 'senha', 'perfis', 'dataCriacao', 'acoes']

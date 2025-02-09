@@ -9,6 +9,9 @@ import { HeaderComponent } from '~components/header/header.component';
 import { SharedModule } from '~components/shared/shared.module';
 import { Credenciais } from '~src/app/config/login/credenciais';
 import { SPINNER_CONFIG, SpinnerConfig } from '~src/app/config/spinner-config';
+import { PessoaDto } from '~src/app/services/entities/pessoa/pessoa.dto';
+import { PessoaService } from '~src/app/services/entities/pessoa/pessoa.service';
+import { ImageService } from '~src/app/services/image.service';
 import { LanguageService } from '~src/app/services/language.service';
 
 
@@ -35,6 +38,8 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService,
     private authService: AuthService,
     private languageService: LanguageService,
+    private imageService: ImageService,
+    private pessoaService: PessoaService,
     @Inject(SPINNER_CONFIG) public spinnerConfig: SpinnerConfig
   ) { }
 
@@ -83,9 +88,7 @@ export class LoginComponent implements OnInit {
       this.authService.authenticate(this.credenciais)
         .pipe(
           takeUntil(this.destroy$),
-          finalize(() => {
-            this.isLoading = false;
-          }
+          finalize(() => this.isLoading = false
           ),
         )
         .subscribe({
@@ -95,16 +98,7 @@ export class LoginComponent implements OnInit {
 
             this.authService.succesFullLogin(token);
 
-            this.toastr.success('Success', 'Login');
-
-            this.loginForm.get('username').setValidators(null);
-            this.loginForm.get('password').setValidators(null);
-
-            this.loginForm.reset(null, { emitEvent: true });
-
-            this.isLoading = false;
-            localStorage.setItem('language', this.languageService.getCurrentLanguage() || 'pt')
-            this.router.navigate(["home"]);
+            this.onPerfilByEmail();
           },
           error: () => {
             this.isLoading = false;
@@ -112,6 +106,36 @@ export class LoginComponent implements OnInit {
           }
         });
     }
+  }
+
+  private onPerfilByEmail(): void {
+    this.isLoading = true;
+    this.pessoaService.findByEmail(this.credenciais.username)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false),
+      )
+      .subscribe({
+        next: (pessoaDto: PessoaDto) => {
+          localStorage.setItem("perfis", JSON.stringify(pessoaDto.perfis));
+          this.toastr.success('Success', 'Login');
+
+          this.loginForm.get('username').setValidators(null);
+          this.loginForm.get('password').setValidators(null);
+
+          this.loginForm.reset(null, { emitEvent: true });
+
+          this.isLoading = false;
+          this.imageService.getImageUrl()
+          localStorage.setItem('language', this.languageService.getCurrentLanguage() || 'pt');
+          this.router.navigate(["home"]);
+
+        }, error: (error) => {
+          this.isLoading = false;
+          const erroMessage = error.message || 'Erro ao consultar Perfil';
+          this.toastr.error(erroMessage, 'Erro');
+        }
+      });
   }
 
   onCancel(): void {

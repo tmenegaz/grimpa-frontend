@@ -182,8 +182,9 @@ export class TecnicoFormComponent implements OnInit {
       && !this.hasSenhaErrors
     ) {
       this.tecnico = { ... this.tecnicoForm.value };
+      const tecnicoDto = this.tecnico.toDto();
 
-      this.tecnicoService.update(this.tecnicoId.id, this.tecnico)
+      this.tecnicoService.update(this.tecnicoId.id, tecnicoDto)
         .pipe(
           takeUntil(this.destroy$),
           finalize(() => {

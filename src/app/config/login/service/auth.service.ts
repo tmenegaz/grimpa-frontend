@@ -3,10 +3,12 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of } from 'rxjs';
+import { finalize, Observable, Subject, takeUntil } from 'rxjs';
 import { Credenciais } from '~app/config/login/credenciais';
 import { API_CONFIG } from '~src/app/config/login/service/auth-header.service';
 import { Roles } from '~src/app/enums/roles.enum';
+import { PessoaDto } from '~src/app/services/entities/pessoa/pessoa.dto';
+import { PessoaService } from '~src/app/services/entities/pessoa/pessoa.service';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +53,7 @@ export class AuthService {
     return null;
   }
 
-  getSub() {
+  getSub(): string {
     const token = this.getTokenFromHeader();
     const decodedToken = this.jwtService.decodeToken(token);
     return decodedToken.sub;
@@ -63,22 +65,20 @@ export class AuthService {
     if (decodedToken.roles && decodedToken.roles.length > 0) {
       localStorage.setItem('roles', JSON.stringify(decodedToken.roles));
     }
-
-
-    if (decodedToken.roles.includes(Roles.ROLE_SUDO)) {
+    if (decodedToken.roles.includes('ROLE_SUDO')) {
       (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ROLE_SUDO)));
       (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ROLE_SUDO)));
       (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ROLE_SUDO)));
     }
-    if (!decodedToken.roles.includes(Roles.ROLE_SUDO)
-      && decodedToken.roles.includes(Roles.ROLE_ADMIN)) {
+    if (!decodedToken.roles.includes('ROLE_SUDO')
+      && decodedToken.roles.includes('ROLE_ADMIN')) {
       (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ROLE_ADMIN)));
       (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ROLE_ADMIN)));
       (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ROLE_ADMIN)));
     }
-    if (!decodedToken.roles.includes(Roles.ROLE_SUDO)
-      && !decodedToken.roles.includes(Roles.ROLE_ADMIN)
-      && decodedToken.roles.includes(Roles.ROLE_USER)) {
+    if (!decodedToken.roles.includes('ROLE_SUDO')
+      && !decodedToken.roles.includes('ROLE_ADMIN')
+      && decodedToken.roles.includes('ROLE_USER')) {
       (localStorage.setItem('role-toggle-tecnico', JSON.stringify(Roles.ROLE_USER)));
       (localStorage.setItem('role-toggle-cliente', JSON.stringify(Roles.ROLE_USER)));
       (localStorage.setItem('role-toggle-processo', JSON.stringify(Roles.ROLE_USER)));
@@ -105,8 +105,6 @@ export class AuthService {
     }
     return null;
   }
-
-
 
   handleTokenExpiration(): void {
     this.toastr.error('A conexão expirou', 'Erro de Autenticação');

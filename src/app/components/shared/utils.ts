@@ -40,13 +40,56 @@ export function getRolesKey(value: Roles): string {
   return Roles[value];
 }
 
-export function convertPerfisToKey(perfis: Perfil[]): string {
-  if (perfis) {
-    return perfis.toString();
+export function convertRolesToKey(roles: string[]): string[] {
+  let roleKeys: string[] = [];
+
+  if (isArray(roles)) {
+    roles.forEach(role => {
+      const roleKey = Object.keys(Roles)[role];
+      if (roleKey) {
+        roleKeys.push(roleKey);
+      }
+    });
+  } else {
+    const roleKey = Object.keys(Roles)[roles.toString()];
+    if (roleKey) {
+      roleKeys.push(roleKey);
+    }
   }
-  else {
-    return Perfil[perfis as unknown as keyof typeof Perfil].toString();
+  return roleKeys.map(roleKey => roleKey);
+}
+
+export function convertPerfisClienteToKey(perfis: Perfil[]): string[] {
+  if (isArray(perfis)) {
+    const perfilsCliente = perfis
+      .filter(tipo => tipo != Perfil.TECNICO)
+      .map(perfil => perfil);
+
+    return perfilsCliente.map(perfil => perfil.toString());
   }
+  return [];
+}
+
+export function convertPerfisTecnicoToKey(perfis: Perfil[]): string[] {
+  if (isArray(perfis)) {
+    const perfilsCliente = perfis
+      .filter(tipo => tipo != Perfil.CLIENTE)
+      .map(perfil => perfil);
+
+    return perfilsCliente.map(perfil => perfil.toString());
+  }
+  return [];
+}
+
+export function convertPerfisProcessoToKey(perfis: Perfil[]): string[] {
+  if (isArray(perfis)) {
+    const perfils = perfis
+      .filter(tipo => tipo != Perfil.AUXILIAR)
+      .map(perfil => perfil);
+
+    return perfils.map(perfil => perfil.toString());
+  }
+  return [];
 }
 
 export function getFileName(filePath) { return filePath.split('/').pop(); }
@@ -77,13 +120,43 @@ export function isArray(value: any): boolean {
   return Array.isArray(value);
 }
 
-export function translateProfiles(profiles: Perfil, translate: TranslateService): string[] {
-  if (isString(profiles)) {
-    return profiles.split(',').map(profile => translate.instant(profile.trim()));
-  } else if (isArray(profiles)) {
-    return profiles.map(profile => translate.instant(profile.trim()));
-  }
-  return [];
+export function translateProfilesCliente(
+  profiles: Perfil[], translate: TranslateService): string[] {
+  const profileKeys = convertPerfisClienteToKey(profiles);
+  const translatedProfiles: string[] = [];
+
+  profileKeys.forEach(profileKey => {
+    translatedProfiles.push(
+      translate?.instant(profileKey)
+    );
+  });
+  return translatedProfiles;
+}
+
+export function translateProfilesTecnico(
+  profiles: Perfil[], translate: TranslateService): string[] {
+  const profileKeys = convertPerfisTecnicoToKey(profiles);
+  const translatedProfiles: string[] = [];
+
+  profileKeys.forEach(profileKey => {
+    translatedProfiles.push(
+      translate?.instant(profileKey)
+    );
+  });
+  return translatedProfiles;
+}
+
+export function translateProfilesProcesso(
+  profiles: Perfil[], translate: TranslateService): string[] {
+  const profileKeys = convertPerfisProcessoToKey(profiles);
+  const translatedProfiles: string[] = [];
+
+  profileKeys.forEach(profileKey => {
+    translatedProfiles.push(
+      translate?.instant(profileKey)
+    );
+  });
+  return translatedProfiles;
 }
 
 export function translateInstant(key: string, translate: TranslateService): string {
@@ -120,5 +193,12 @@ export function toggleClassBasedOnVisibility(renderer: Renderer2, element: HTMLE
 
 export function className(str: string): string {
   return str.replace(/_/g, '').toLowerCase();
+}
+
+export function hasClienteOrTecnico(perfis: number[]): boolean {
+  const cliente = perfis.includes(Perfil.CLIENTE);
+  const tecnico = perfis.includes(Perfil.TECNICO);
+
+  return cliente || tecnico;
 }
 

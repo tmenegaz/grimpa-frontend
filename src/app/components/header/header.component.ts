@@ -6,6 +6,7 @@ import { LanguageService } from '~src/app/services/language.service';
 import { RouteService } from '~src/app/services/route.service';
 import { Router } from '@angular/router';
 import { ImageService } from '~src/app/services/image.service';
+import { Perfil } from '~src/app/enums/perfil.enum';
 
 @Component({
   selector: 'app-header',
@@ -45,7 +46,14 @@ export class HeaderComponent implements OnInit {
   }
 
   account(): void {
-    this.router.navigate(['/conta']);
+    const perfis = localStorage.getItem('perfis');
+
+    if (perfis.includes(Perfil.CLIENTE.toString())) {
+      this.router.navigate(['/cliente-conta']);
+    }
+    if (perfis.includes(Perfil.TECNICO.toString())) {
+      this.router.navigate(['/tecnico-conta']);
+    }
   }
 
   getImageUrl(): string { return this.imageService.getImageUrl(); }

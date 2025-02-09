@@ -6,6 +6,7 @@ import { Tecnico } from '~src/app/components/tecnico/entity/tecnico.model';
 import { API_CONFIG, AuthHeaderService } from '~src/app/config/login/service/auth-header.service';
 import { TecnicoDto } from '../entity/tecnico.dto';
 import { Page } from '~interfaces/page.interface';
+import { FilePathDto } from '../../conta/entity/file-path.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +54,7 @@ export class TecnicoService {
       );
   }
 
-  update(id: string, tecnico: Tecnico): Observable<Tecnico> {
+  update(id: string, tecnico: TecnicoDto): Observable<Tecnico> {
     const headers = this.authHeaderService.getHeaders();
 
     return this.http
@@ -66,6 +67,23 @@ export class TecnicoService {
             this.authService.handleTokenExpiration();
           }
           return throwError(() => error.error.message);
+        })
+      );
+  }
+
+  updateFilePath(id: string, filePahtDto: FilePathDto): Observable<TecnicoDto> {
+    const headers = this.authHeaderService.getHeaders();
+
+    return this.http
+      .put<TecnicoDto>(`${API_CONFIG.baseURL}/tecnicos/filePath/${id}`, filePahtDto,
+        { headers }
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse): Observable<never> => {
+          if (error.status === 403) {
+            this.authService.handleTokenExpiration();
+          }
+          return throwError(() => error);
         })
       );
   }

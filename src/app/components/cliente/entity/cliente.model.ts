@@ -1,6 +1,8 @@
-import { Roles } from "~src/app/enums/roles.enum";
-import { ClienteDto } from "./cliente.dto";
+import { TranslateService } from "@ngx-translate/core";
 import { Perfil } from "~src/app/enums/perfil.enum";
+import { Roles } from "~src/app/enums/roles.enum";
+import { translateProfilesCliente } from "../../shared/utils";
+import { ClienteDto } from "./cliente.dto";
 
 export class Cliente {
   id?: string;
@@ -12,6 +14,7 @@ export class Cliente {
   filePath: { id: string, path: string };
   perfis: Perfil[];
   dataCriacao: Date | string;
+  perfisTraduzidos: string[];
 
   constructor(
     nome: string,
@@ -22,6 +25,7 @@ export class Cliente {
     filePath: { id: string, path: string },
     perfis: Perfil[],
     dataCriacao: Date | string,
+    translate: TranslateService,
     id?: string,
   ) {
     this.id = id;
@@ -33,9 +37,10 @@ export class Cliente {
     this.senha = senha;
     this.perfis = perfis;
     this.dataCriacao = dataCriacao;
+    this.perfisTraduzidos = translateProfilesCliente(perfis, translate);
   }
 
-  static fromDto(dto: ClienteDto): Cliente {
+  static fromDto(dto: ClienteDto, translate?: TranslateService): Cliente {
     return new Cliente(
       dto.nome,
       dto.cpf,
@@ -45,6 +50,7 @@ export class Cliente {
       dto.filePath,
       dto.perfis,
       dto.dataCriacao,
+      translate,
       dto.id,
     );
   }
@@ -59,6 +65,7 @@ export class Cliente {
       filePath: this.filePath,
       senha: this.senha,
       perfis: this.perfis,
+      perfisTraduzidos: this.perfisTraduzidos,
       dataCriacao: this.dataCriacao
     };
   }

@@ -10,5 +10,6 @@ export interface TecnicoDto {
   senha: string;
   roles: Roles;
   perfis: Perfil[];
+  perfisTraduzidos: string[];
   dataCriacao: Date | string;
 }

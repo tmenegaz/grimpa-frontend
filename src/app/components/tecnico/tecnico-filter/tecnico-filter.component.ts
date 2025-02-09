@@ -64,7 +64,7 @@ export class TecnicoFilterComponent implements OnInit {
 
   onEditMode(event: any): void {
     const name = event.source.name;
-    const roles = event.value.includes(Roles.ROLE_ADMIN)
+    const roles = event.value.includes("ROLE_ADMIN")
       ? [Roles.ROLE_ADMIN]
       : [Roles.ROLE_USER];
 
